@@ -34,6 +34,7 @@ screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 width = screen.get_width() 
 height = screen.get_height() 
+import math
 
 # ---------------------------
 # Initialize global variables
@@ -41,31 +42,7 @@ height = screen.get_height()
 circle_x = 200
 circle_y = 200
 
-# ---------------------------
-
-running = True
-while running:
-    # EVENT HANDLING
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    
-    screen.fill((255, 255, 255))  # always the first drawing command
-    pygame.draw.rect(screen,dark,[width - 500,height - 350,240,80]) 
-    mouse = pygame.mouse.get_pos()
-#    if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:
-        
-    pygame.display.flip()
-
-    clock.tick(30)
-    #---------------------------
-
-
-pygame.quit()
-
-import math
-
+#Bullet trajectory function
 def bullet(inputAngle, inputPower):
     gravConstant = 20
     inputAngle = math.radians(inputAngle) #input angle (x) 0<x<90 #these are the variables to control the power, angle of fireing, and the strength of gravity 
@@ -77,9 +54,32 @@ def bullet(inputAngle, inputPower):
         print("(",x,",", y,")")
 
 def main():
-    angle = float(input("Enter the angle: "))
-    power = float(input("Enter the power: "))
-    bullet(angle,power)
+    running = True
+
+    while running:
+        # EVENT HANDLING
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+            running = False
+
+    
+        screen.fill((255, 255, 255))  # always the first drawing command
+        pygame.draw.rect(screen,dark,[width - 500,height - 350,240,80]) 
+        mouse = pygame.mouse.get_pos()
+#    if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:
+        
+        pygame.display.flip()
+
+        clock.tick(30)
+    #---------------------------
+
+
+    pygame.quit()
+
+
+
+
 
 main()
+
 
