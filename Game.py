@@ -60,7 +60,7 @@ def main():
         # EVENT HANDLING
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-            running = False
+                running = False
 
     
         screen.fill((255, 255, 255))  # always the first drawing command
@@ -75,9 +75,6 @@ def main():
 
 
     pygame.quit()
-
-
-
 
 
 main()
