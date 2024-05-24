@@ -61,19 +61,40 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if play_button.collidepoint(event.pos):
+                game_loop()
+            if settings_button.collidepoint(event.pos):
+                settings_menu()
+            if shop_button.collidepoint(event.pos):
+                shop_menu()
+            if inventory_button.collidepoint(event.pos):
+                inventory_menu()
+                
+ # definition of buttonss
+        mouse = pygame.mouse.get_pos() # array x is [0] y is [1]
+        play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
+        settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
+        shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
+        inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
 
-    
+
         screen.fill((255, 255, 255))  # always the first drawing command
-        pygame.draw.rect(screen,dark,[width - 500,height - 350,240,80]) 
-        mouse = pygame.mouse.get_pos()
-#    if width/2 <= mouse[0] <= width/2+140 and height/2 <= mouse[1] <= height/2+40:
-        
+        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4)
+ # drawing the buttons
+        pygame.draw.rect(screen, lightcolor, play_button)
+        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
+        pygame.draw.rect(screen, lightcolor, settings_button)
+        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
+        pygame.draw.rect(screen, lightcolor, shop_button)
+        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
+        pygame.draw.rect(screen, lightcolor, inventory_button)
+        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
         pygame.display.flip()
 
         clock.tick(30)
     #---------------------------
-
-
+    
     pygame.quit()
 
 
