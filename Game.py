@@ -70,13 +70,7 @@ def main():
                 shop_menu()
             if inventory_button.collidepoint(event.pos):
                 inventory_menu()
-                
- # definition of buttonss
-        mouse = pygame.mouse.get_pos() # array x is [0] y is [1]
-        play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
-        settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
-        shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
-        inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
+            keys = pygame.key.get_pressed() 
 
 
         screen.fill((255, 255, 255))  # always the first drawing command
@@ -91,6 +85,11 @@ def main():
         pygame.draw.rect(screen, lightcolor, inventory_button)
         draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
         pygame.display.flip()
+
+    # speed
+        vel = 10
+
+    
 
         clock.tick(30)
     #---------------------------
