@@ -41,6 +41,17 @@ import math
 
 # ---------------------------
 
+
+def bullet(inputAngle, inputPower):
+    gravConstant = 20
+    inputAngle = math.radians(inputAngle) #input angle (x) 0<x<90 #these are the variables to control the power, angle of fireing, and the strength of gravity 
+    x = 0.0
+    y = 0.0
+    while y>=0: #displays the equation (use this later on for mapping the trajectory of the bullet)
+        y= (x*math.tan(inputAngle))-(gravConstant*x*x)/(2*inputPower*inputPower*math.cos(inputAngle)*math.cos(inputAngle)) #the physics projective equation (pull this up for the video)
+        x+=1 
+        print("(",x,",", y,")")
+
 running = True
 while running:
     # EVENT HANDLING
