@@ -18,11 +18,18 @@ clock = pygame.time.Clock()
 green_tank_x = 200
 green_tank_y = 200
 
+red_tank_x = 600
+red_tank_y = 200
+
 # make the tank
-green_tank =pygame.image.load("green_tank.png")
+green_tank =pygame.image.load("green_tank(1).png")
 green_tank_rect = green_tank.get_rect()
 green_tank.center = screen.get_rect().center
 print(green_tank_rect)
+red_tank =pygame.image.load("red_tank.png")
+red_tank_rect = red_tank.get_rect()
+red_tank.center = screen.get_rect().center
+print(red_tank_rect)
 # ---------------------------
 
 running = True
@@ -38,6 +45,7 @@ while running:
     # DRAWING
     screen.fill((255, 255, 255))  # always the first drawing command
     pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, 2)  # draw hit-box
+    pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, 2)  # draw hit-box
     keys = pygame.key.get_pressed()
     if keys[119] == True:  # w
         green_tank_y -= 10
@@ -50,6 +58,18 @@ while running:
 
     if keys[100] == True:  # d
         green_tank_x += 10
+
+    if keys[119] == True:  # i
+        red_tank_y -= 10
+
+    if keys[97] == True:  # j
+        red_tank_x -= 10
+
+    if keys[115] == True:  # k
+        red_tank_y += 10
+
+    if keys[100] == True:  # l
+        red_tank_x += 1
 
     
 
