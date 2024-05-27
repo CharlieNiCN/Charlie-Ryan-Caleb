@@ -46,16 +46,16 @@ import math
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Sprite class
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, vx, vy):
+# Sprite class for the bullet 
+class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
+    def __init__(self, x, y, vx, vy): #x,y are starting position, vx,vy is the speed in x and y
         super().__init__()
         self.image = pygame.Surface((50, 50))
         self.image.fill(WHITE)
         self.rect = self.image.get_rect(center=(x, y))
         self.vx = vx
         self.vy = vy
-        self.gravity = 0.5
+        self.gravity = 0.5 #gravity
 
     def update(self):
         # Update velocity with gravity
