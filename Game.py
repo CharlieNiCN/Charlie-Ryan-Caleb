@@ -38,21 +38,6 @@ import math
 
 # ---------------------------
 # Initialize global variables
-{
-   "style_name": "green_tank",
-   "images": [
-      "green_tank.png"
-   ],
-   "orientation": "vertical",
-   "padding": 5,
-   "custom_styles": {
-      "display": "inline-block"
-   },
-   "stylesheet": "css",
-   "path_prefix": "",
-   "output": "png",
-   "enable_cache_busting": true
-}
 
 # ---------------------------
 
