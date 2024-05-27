@@ -51,8 +51,33 @@ while running:
     # GAME STATE UPDATES
     # All game math and comparisons happen here
 
-    # DRAWING
-    screen.fill((255, 255, 255))  # always the first drawing command
+   if event.type == pygame.MOUSEBUTTONDOWN:
+            if play_button.collidepoint(event.pos):
+                game_loop()
+            if settings_button.collidepoint(event.pos):
+                settings_menu()
+            if shop_button.collidepoint(event.pos):
+                shop_menu()
+            if inventory_button.collidepoint(event.pos):
+                inventory_menu()
+            keys = pygame.key.get_pressed() 
+
+        font = pygame.font.SysFont(None, 55)
+        button_font = pygame.font.SysFont(None, 40)
+
+        screen.fill((255, 255, 255))  # always the first drawing command
+        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4)
+ # drawing the buttons
+        pygame.draw.rect(screen, lightcolor, play_button)
+        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
+        pygame.draw.rect(screen, lightcolor, settings_button)
+        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
+        pygame.draw.rect(screen, lightcolor, shop_button)
+        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
+        pygame.draw.rect(screen, lightcolor, inventory_button)
+        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
+        pygame.display.flip()
+
 
     pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
 
@@ -63,6 +88,26 @@ while running:
     #---------------------------
     
     pygame.quit()
+
+def draw_Button(text, font, color, surface, x, y):
+        textobj = font.render(text, True, color)
+        textrect = textobj.get_rect()
+        textrect.topleft = (x, y)
+        surface.blit(textobj, textrect)
+
+def inventory_menu():
+        running = True
+        while running:
+            for Py_Event in pygame.event.get():
+                if (Py_Event.type == pygame.QUIT):
+                    running = False
+            screen.fill(white)
+            #inventory menu 
+
+            pygame.display.flip()
+            clock.tick(30)
+        main()
+        
 
 
 main()
