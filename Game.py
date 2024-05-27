@@ -26,9 +26,15 @@ pygame.init()
 WIDTH = 600
 HEIGHT = 400
 SIZE = (WIDTH, HEIGHT)
+white = (255,255,255) 
+lightcolor = (170,170,170)  
+dark = (100,100,100) 
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
+width = screen.get_width() 
+height = screen.get_height() 
+import math
 
 # ---------------------------
 # Initialize global variables
@@ -49,9 +55,6 @@ clock = pygame.time.Clock()
 }
 
 # ---------------------------
-#speed 
-vel = 10 
-
 
 running = True
 while running:
@@ -66,37 +69,17 @@ while running:
     # DRAWING
     screen.fill((255, 255, 255))  # always the first drawing command
 
-    pygame.draw.rectangle(screen, (0, 0, 255), (1, 0), 30)
+    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
 
-keys = pygame.key.get_pressed() 
-      
-    # if left arrow key is pressed 
-if keys[pygame.K_LEFT] and circle_x>0: 
-          
-        # decrement in x co-ordinate 
-        circle_x -= vel 
-          
-    # if left arrow key is pressed 
-if keys[pygame.K_RIGHT] and circle_x<500-WIDTH: 
-          
-        # increment in x co-ordinate 
-        circle_x += vel 
-         
-    # if left arrow key is pressed    
-if keys[pygame.K_UP] and circle_y>0: 
-          
-        # decrement in y co-ordinate 
-        circle_y -= vel 
-              # if left arrow key is pressed    
-if keys[pygame.K_DOWN] and circle_y<500-HEIGHT: 
-        # increment in y co-ordinate 
-        circle_y += vel 
     # Must be the last two lines
     # of the game loop
-pygame.display.update()
-pygame.display.flip()
-clock.tick(30)
+    pygame.display.flip()
+    clock.tick(30)
     #---------------------------
+    
+    pygame.quit()
 
 
-pygame.quit()
+main()
+
+
