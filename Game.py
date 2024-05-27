@@ -42,15 +42,38 @@ import math
 # ---------------------------
 
 
-def bullet(inputAngle, inputPower):
-    gravConstant = 20
-    inputAngle = math.radians(inputAngle) #input angle (x) 0<x<90 #these are the variables to control the power, angle of fireing, and the strength of gravity 
-    x = 0.0
-    y = 0.0
-    while y>=0: #displays the equation (use this later on for mapping the trajectory of the bullet)
-        y= (x*math.tan(inputAngle))-(gravConstant*x*x)/(2*inputPower*inputPower*math.cos(inputAngle)*math.cos(inputAngle)) #the physics projective equation (pull this up for the video)
-        x+=1 
-        print("(",x,",", y,")")
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+# Sprite class
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y, vx, vy):
+        super().__init__()
+        self.image = pygame.Surface((50, 50))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vx = vx
+        self.vy = vy
+        self.gravity = 0.5
+
+    def update(self):
+        # Update velocity with gravity
+        self.vy += self.gravity
+
+        # Update the position based on velocity
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+
+        # Boundary checking to keep the sprite within the screen
+        if self.rect.left < 0 or self.rect.right > WIDTH or self.rect.bottom > HEIGHT:
+            self.kill()  # Remove the sprite from all groups
+
+# Sprite group
+all_sprites = pygame.sprite.Group()
+sprite = Bullet(WIDTH // 2, HEIGHT // 2, 5, -10)  # Initial position and velocity
+all_sprites.add(sprite)
+
 
 running = True
 while running:
