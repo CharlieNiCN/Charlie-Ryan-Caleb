@@ -48,13 +48,13 @@ while running:
     pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, 2)  # draw hit-box
 
     for event in pygame.event.get():
-        if event.type == pygame.KEYLEFT:
+        if event.type == pygame.K_LEFT:
             red_tank_x -= 10
-        if event.type == pygame.KEYRIGHT:
+        if event.type == pygame.K_RIGHT:
             red_tank_x += 1
-        if event.type == pygame.KEYA:
+        if event.type == pygame.K_a:
             green_tank_x -= 10
-        if event.type == pygame.KEYD:
+        if event.type == pygame.K_d:
             green_tank_x += 10
         
 
