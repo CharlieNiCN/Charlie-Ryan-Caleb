@@ -22,12 +22,13 @@ import math
 # Initialize Pygame
 pygame.init()
 
-WIDTH = 600
-HEIGHT = 400
-SIZE = (WIDTH, HEIGHT)
+Width = 640
+Height = 480
+SIZE = (Width, Height)
 white = (255,255,255) 
 lightcolor = (170,170,170)  
-dark = (100,100,100) 
+dark = (100,100,100)
+scores = []
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
@@ -38,7 +39,8 @@ height = screen.get_height()
 # ---------------------------
 # Initialize global variables
 
-# ---------------------------
+circle_x = 200
+circle_y = 200
 
 
 # Colors
@@ -61,7 +63,47 @@ def inventory_menu():
 
             pygame.display.flip()
             clock.tick(30)
-        
+            
+def settings_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+    #setting
+
+        pygame.display.flip()
+        clock.tick(30)
+    
+
+def shop_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+      #shop
+
+        pygame.display.flip()
+        clock.tick(30) 
+def game_loop():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+        screen.fill(white)
+        # put game code here
+      pygame.display(flip)
+      clock.tick(30)
+
 # Sprite class for the bullet 
 class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
     def __init__(self, x, y, vx, vy): #x,y are starting position, vx,vy is the speed in x and y
@@ -85,12 +127,17 @@ class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
         if self.rect.left < 0 or self.rect.right > WIDTH or self.rect.bottom > HEIGHT:
             self.kill()  # Remove the sprite from all groups
 
-# Sprite group
-all_sprites = pygame.sprite.Group()
 
-running = True
-while running:
+def main():
+    running = True
+    play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
+    settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
+    shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
+    inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
+
+    while running:
     # EVENT HANDLING
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -103,20 +150,49 @@ while running:
             all_sprites.add(sprite)
             print('Bullet spawned at:', mouse_x, mouse_y)
 
-    # GAME STATE UPDATES
-    all_sprites.update()
 
-    # DRAW
-    screen.fill(BLACK)  # Clear the screen
-    all_sprites.draw(screen)  # Draw all sprites
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.collidepoint(event.pos):
+    #                game_loop()
+                if settings_button.collidepoint(event.pos):
+      #              settings_menu()
+                if shop_button.collidepoint(event.pos):
+      #              shop_menu()
+                if inventory_button.collidepoint(event.pos):
+      #              inventory_menu()
+                keys = pygame.key.get_pressed() 
+
+        font = pygame.font.SysFont(None, 55)
+        button_font = pygame.font.SysFont(None, 40)
+
+        screen.fill((255, 255, 255))  # always the first drawing command
+        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4 - 40)
+        draw_Button('Tanks', font, dark, screen, Width // 2 - 50, Height // 4 - 70)
+ # drawing the buttons
+        pygame.draw.rect(screen, lightcolor, play_button)
+        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
+        pygame.draw.rect(screen, lightcolor, settings_button)
+        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
+        pygame.draw.rect(screen, lightcolor, shop_button)
+        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
+        pygame.draw.rect(screen, lightcolor, inventory_button)
+        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
+        pygame.display.flip()
+
+
+    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
+
+  
+    all_sprites.update()
 
     pygame.display.flip()  # Flip the display
     clock.tick(30)  # Cap the frame rate
+    
+    #---------------------------
+    
+    pygame.quit()
 
-pygame.quit()
 
-
-
-
-
+main()
 
