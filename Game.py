@@ -101,8 +101,8 @@ def game_loop():
                 main()
         screen.fill(white)
         # put game code here
-      pygame.display(flip)
-      clock.tick(30)
+        pygame.display.flip()
+        clock.tick(30)
 
 # Sprite class for the bullet 
 class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
@@ -124,9 +124,10 @@ class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
         self.rect.y += self.vy
 
         # Boundary checking to keep the sprite within the screen
-        if self.rect.left < 0 or self.rect.right > WIDTH or self.rect.bottom > HEIGHT:
+        if self.rect.left < 0 or self.rect.right > Width or self.rect.bottom > Height:
             self.kill()  # Remove the sprite from all groups
 
+all_sprites = pygame.sprite.Group()
 
 def main():
     running = True
@@ -138,30 +139,30 @@ def main():
     while running:
     # EVENT HANDLING
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
             # Spawn a new sprite at the mouse click position
-            mouse_x, mouse_y = event.pos
-            vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-            vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-            sprite = Bullet(mouse_x, mouse_y, vx, vy)
-            all_sprites.add(sprite)
-            print('Bullet spawned at:', mouse_x, mouse_y)
+                mouse_x, mouse_y = event.pos
+                vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+                vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+                sprite = Bullet(mouse_x, mouse_y, vx, vy)
+                all_sprites.add(sprite)
+                print('Bullet spawned at:', mouse_x, mouse_y)
 
 
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if play_button.collidepoint(event.pos):
+        #if event.type == pygame.MOUSEBUTTONDOWN:
+        #    if play_button.collidepoint(event.pos):
     #                game_loop()
-                if settings_button.collidepoint(event.pos):
+        #    if settings_button.collidepoint(event.pos):
       #              settings_menu()
-                if shop_button.collidepoint(event.pos):
+        #    if shop_button.collidepoint(event.pos):
       #              shop_menu()
-                if inventory_button.collidepoint(event.pos):
+        #    if inventory_button.collidepoint(event.pos):
       #              inventory_menu()
-                keys = pygame.key.get_pressed() 
+            keys = pygame.key.get_pressed() 
 
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
