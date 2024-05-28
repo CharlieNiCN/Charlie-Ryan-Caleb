@@ -16,11 +16,10 @@
 
 #Shop -> Buy powerups, new weapons, skins (colors, do later)
 
-# pygame template
-
 import pygame
+import math
 
-
+# Initialize Pygame
 pygame.init()
 
 Width = 640
@@ -35,7 +34,7 @@ screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 width = screen.get_width() 
 height = screen.get_height() 
-import math
+
 
 # ---------------------------
 # Initialize global variables
@@ -43,16 +42,91 @@ import math
 circle_x = 200
 circle_y = 200
 
-#Bullet trajectory function
-def bullet(inputAngle, inputPower):
-    gravConstant = 20
-    inputAngle = math.radians(inputAngle) #input angle (x) 0<x<90 #these are the variables to control the power, angle of fireing, and the strength of gravity 
-    x = 0.0
-    y = 0.0
-    while y>=0: #displays the equation (use this later on for mapping the trajectory of the bullet)
-        y= (x*math.tan(inputAngle))-(gravConstant*x*x)/(2*inputPower*inputPower*math.cos(inputAngle)*math.cos(inputAngle)) #the physics projective equation (pull this up for the video)
-        x+=1 
-        print("(",x,",", y,")")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+def draw_Button(text, font, color, surface, x, y):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+def inventory_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if (Py_Event.type == pygame.QUIT):
+                running = False
+            screen.fill(white)
+            #inventory menu 
+
+            pygame.display.flip()
+            clock.tick(30)
+            
+def settings_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+    #setting
+
+        pygame.display.flip()
+        clock.tick(30)
+    
+
+def shop_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+      #shop
+
+        pygame.display.flip()
+        clock.tick(30) 
+def game_loop():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+        screen.fill(white)
+        # put game code here
+      pygame.display(flip)
+      clock.tick(30)
+
+# Sprite class for the bullet 
+class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
+    def __init__(self, x, y, vx, vy): #x,y are starting position, vx,vy is the speed in x and y
+        super().__init__()
+        self.image = pygame.Surface((50, 50))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vx = vx
+        self.vy = vy
+        self.gravity = 0.5 #gravity
+
+    def update(self):
+        # Update velocity with gravity
+        self.vy += self.gravity
+
+        # Update the position based on velocity
+        self.rect.x += self.vx
+        self.rect.y += self.vy
+
+        # Boundary checking to keep the sprite within the screen
+        if self.rect.left < 0 or self.rect.right > WIDTH or self.rect.bottom > HEIGHT:
+            self.kill()  # Remove the sprite from all groups
+
 
 def main():
     running = True
@@ -63,12 +137,20 @@ def main():
 
     while running:
     # EVENT HANDLING
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
 
-    # GAME STATE UPDATES
-    # All game math and comparisons happen here
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Spawn a new sprite at the mouse click position
+            mouse_x, mouse_y = event.pos
+            vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+            vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+            sprite = Bullet(mouse_x, mouse_y, vx, vy)
+            all_sprites.add(sprite)
+            print('Bullet spawned at:', mouse_x, mouse_y)
+
+
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.collidepoint(event.pos):
@@ -101,74 +183,16 @@ def main():
 
     pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
 
-    # Must be the last two lines
-    # of the game loop
-    pygame.display.flip()
-    clock.tick(30)
+  
+    all_sprites.update()
+
+    pygame.display.flip()  # Flip the display
+    clock.tick(30)  # Cap the frame rate
+    
     #---------------------------
     
     pygame.quit()
-def draw_Button(text, font, color, surface, x, y):
-        textobj = font.render(text, True, color)
-        textrect = textobj.get_rect()
-        textrect.topleft = (x, y)
-        surface.blit(textobj, textrect)
 
-def inventory_menu():
-        running = True
-        while running:
-            for Py_Event in pygame.event.get():
-                if (Py_Event.type == pygame.QUIT):
-                    running = False
-            screen.fill(white)
-            #inventory menu 
-
-            pygame.display.flip()
-            clock.tick(30)
-        
-def game_loop():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                running = False
-                main()
-
-        screen.fill(white)
-        # put game code here
-
-        pygame.display.flip()
-        clock.tick(30)   
-
-def settings_menu():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                running = False
-                main()
-
-        screen.fill(white)
-    #setting
-
-        pygame.display.flip()
-        clock.tick(30)
-    
-
-def shop_menu():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                running = False
-                main()
-
-        screen.fill(white)
-      #shop
-
-        pygame.display.flip()
-        clock.tick(30)
-    
 
 main()
 
