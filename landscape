@@ -13,8 +13,7 @@ clock = pygame.time.Clock()
 # ---------------------------
 # Initialize global variables
 
-circle_x = 200
-circle_y = 200
+
 #test 
 # ---------------------------
 
@@ -27,11 +26,12 @@ while running:
 
     # GAME STATE UPDATES
     # All game math and comparisons happen here
-
+    
     # DRAWING
     screen.fill((255, 255, 255))  # always the first drawing command
-
-    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
+    surface = pygame.Surface((500, 300))
+    screen = pygame.display.set_mode((800, 600))
+    screen.blit(surface, (0,0))
 
     # Must be the last two lines
     # of the game loop
