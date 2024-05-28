@@ -23,9 +23,9 @@ import pygame
 
 pygame.init()
 
-WIDTH = 600
-HEIGHT = 400
-SIZE = (WIDTH, HEIGHT)
+Width = 640
+Height = 480
+SIZE = (Width, Height)
 white = (255,255,255) 
 lightcolor = (170,170,170)  
 dark = (100,100,100) 
@@ -39,9 +39,10 @@ import math
 # ---------------------------
 # Initialize global variables
 
-# ---------------------------
+circle_x = 200
+circle_y = 200
 
-
+#Bullet trajectory function
 def bullet(inputAngle, inputPower):
     gravConstant = 20
     inputAngle = math.radians(inputAngle) #input angle (x) 0<x<90 #these are the variables to control the power, angle of fireing, and the strength of gravity 
@@ -52,26 +53,32 @@ def bullet(inputAngle, inputPower):
         x+=1 
         print("(",x,",", y,")")
 
-running = True
-while running:
+def main():
+    running = True
+    play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
+    settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
+    shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
+    inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
+
+    while running:
     # EVENT HANDLING
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
     # GAME STATE UPDATES
     # All game math and comparisons happen here
 
-   if event.type == pygame.MOUSEBUTTONDOWN:
-            if play_button.collidepoint(event.pos):
-                game_loop()
-            if settings_button.collidepoint(event.pos):
-                settings_menu()
-            if shop_button.collidepoint(event.pos):
-                shop_menu()
-            if inventory_button.collidepoint(event.pos):
-                inventory_menu()
-            keys = pygame.key.get_pressed() 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.collidepoint(event.pos):
+    #                game_loop()
+                if settings_button.collidepoint(event.pos):
+      #              settings_menu()
+                if shop_button.collidepoint(event.pos):
+      #              shop_menu()
+                if inventory_button.collidepoint(event.pos):
+      #              inventory_menu()
+                keys = pygame.key.get_pressed() 
 
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
@@ -99,7 +106,6 @@ while running:
     #---------------------------
     
     pygame.quit()
-
 def draw_Button(text, font, color, surface, x, y):
         textobj = font.render(text, True, color)
         textrect = textobj.get_rect()
@@ -120,7 +126,5 @@ def inventory_menu():
         main()
         
 
-
 main()
-
 
