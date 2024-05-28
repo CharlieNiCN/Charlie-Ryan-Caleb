@@ -28,7 +28,8 @@ Height = 480
 SIZE = (Width, Height)
 white = (255,255,255) 
 lightcolor = (170,170,170)  
-dark = (100,100,100) 
+dark = (100,100,100)
+scores = []
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
@@ -84,7 +85,8 @@ def main():
         button_font = pygame.font.SysFont(None, 40)
 
         screen.fill((255, 255, 255))  # always the first drawing command
-        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4)
+        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4 - 40)
+        draw_Button('Tanks', font, dark, screen, Width // 2 - 50, Height // 4 - 70)
  # drawing the buttons
         pygame.draw.rect(screen, lightcolor, play_button)
         draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
@@ -123,8 +125,50 @@ def inventory_menu():
 
             pygame.display.flip()
             clock.tick(30)
-        main()
         
+def game_loop():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+        # put game code here
+
+        pygame.display.flip()
+        clock.tick(30)   
+
+def settings_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+    #setting
+
+        pygame.display.flip()
+        clock.tick(30)
+    
+
+def shop_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                running = False
+                main()
+
+        screen.fill(white)
+      #shop
+
+        pygame.display.flip()
+        clock.tick(30)
+    
 
 main()
 
