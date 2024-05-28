@@ -16,11 +16,9 @@
 
 #Shop -> Buy powerups, new weapons, skins (colors, do later)
 
-# pygame template
-
 import pygame
 
-
+# Initialize Pygame
 pygame.init()
 
 WIDTH = 600
