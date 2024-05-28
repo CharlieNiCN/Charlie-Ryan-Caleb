@@ -46,30 +46,17 @@ while running:
     screen.fill((255, 255, 255))  # always the first drawing command
     pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, 2)  # draw hit-box
     pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, 2)  # draw hit-box
-    keys = pygame.key.get_pressed()
-    if keys[119] == True:  # w
-        green_tank_y -= 10
 
-    if keys[97] == True:  # a
-        green_tank_x -= 10
-
-    if keys[115] == True:  # s
-        green_tank_y += 10
-
-    if keys[100] == True:  # d
-        green_tank_x += 10
-
-    if keys[119] == True:  # i
-        red_tank_y -= 10
-
-    if keys[97] == True:  # j
-        red_tank_x -= 10
-
-    if keys[115] == True:  # k
-        red_tank_y += 10
-
-    if keys[100] == True:  # l
-        red_tank_x += 1
+    for event in pygame.event.get():
+        if event.type == pygame.KEYLEFT:
+            red_tank_x -= 10
+        if event.type == pygame.KEYRIGHT:
+            red_tank_x += 1
+        if event.type == pygame.KEYA:
+            green_tank_x -= 10
+        if event.type == pygame.KEYD:
+            green_tank_x += 10
+        
 
     
 
