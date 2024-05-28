@@ -17,6 +17,7 @@
 #Shop -> Buy powerups, new weapons, skins (colors, do later)
 
 import pygame
+import math
 
 # Initialize Pygame
 pygame.init()
@@ -32,7 +33,7 @@ screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 width = screen.get_width() 
 height = screen.get_height() 
-import math
+
 
 # ---------------------------
 # Initialize global variables
@@ -43,7 +44,24 @@ import math
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+def draw_Button(text, font, color, surface, x, y):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
 
+def inventory_menu():
+    running = True
+    while running:
+        for Py_Event in pygame.event.get():
+            if (Py_Event.type == pygame.QUIT):
+                running = False
+            screen.fill(white)
+            #inventory menu 
+
+            pygame.display.flip()
+            clock.tick(30)
+        
 # Sprite class for the bullet 
 class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
     def __init__(self, x, y, vx, vy): #x,y are starting position, vx,vy is the speed in x and y
@@ -69,9 +87,6 @@ class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
 
 # Sprite group
 all_sprites = pygame.sprite.Group()
-sprite = Bullet(WIDTH // 2, HEIGHT // 2, 5, -10)  # Initial position and velocity
-all_sprites.add(sprite)
-
 
 running = True
 while running:
@@ -79,69 +94,29 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Spawn a new sprite at the mouse click position
+            mouse_x, mouse_y = event.pos
+            vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+            vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+            sprite = Bullet(mouse_x, mouse_y, vx, vy)
+            all_sprites.add(sprite)
+            print('Bullet spawned at:', mouse_x, mouse_y)
 
     # GAME STATE UPDATES
-    # All game math and comparisons happen here
+    all_sprites.update()
 
-   if event.type == pygame.MOUSEBUTTONDOWN:
-            if play_button.collidepoint(event.pos):
-                game_loop()
-            if settings_button.collidepoint(event.pos):
-                settings_menu()
-            if shop_button.collidepoint(event.pos):
-                shop_menu()
-            if inventory_button.collidepoint(event.pos):
-                inventory_menu()
-            keys = pygame.key.get_pressed() 
+    # DRAW
+    screen.fill(BLACK)  # Clear the screen
+    all_sprites.draw(screen)  # Draw all sprites
 
-        font = pygame.font.SysFont(None, 55)
-        button_font = pygame.font.SysFont(None, 40)
+    pygame.display.flip()  # Flip the display
+    clock.tick(30)  # Cap the frame rate
 
-        screen.fill((255, 255, 255))  # always the first drawing command
-        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4)
- # drawing the buttons
-        pygame.draw.rect(screen, lightcolor, play_button)
-        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
-        pygame.draw.rect(screen, lightcolor, settings_button)
-        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
-        pygame.draw.rect(screen, lightcolor, shop_button)
-        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
-        pygame.draw.rect(screen, lightcolor, inventory_button)
-        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
-        pygame.display.flip()
+pygame.quit()
 
 
-    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
-
-    # Must be the last two lines
-    # of the game loop
-    pygame.display.flip()
-    clock.tick(30)
-    #---------------------------
-    
-    pygame.quit()
-
-def draw_Button(text, font, color, surface, x, y):
-        textobj = font.render(text, True, color)
-        textrect = textobj.get_rect()
-        textrect.topleft = (x, y)
-        surface.blit(textobj, textrect)
-
-def inventory_menu():
-        running = True
-        while running:
-            for Py_Event in pygame.event.get():
-                if (Py_Event.type == pygame.QUIT):
-                    running = False
-            screen.fill(white)
-            #inventory menu 
-
-            pygame.display.flip()
-            clock.tick(30)
-        main()
-        
 
 
-main()
 
 
