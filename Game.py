@@ -126,6 +126,24 @@ class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
         # Boundary checking to keep the sprite within the screen
         if self.rect.left < 0 or self.rect.right > Width or self.rect.bottom > Height:
             self.kill()  # Remove the sprite from all groups
+class PowerUp(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((30, 30))
+        self.image.fill((0, 255, 0))  # Green color for the power-up
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vy = 2  # Slow falling speed
+
+    def update(self):
+        # Update the position based on velocity
+        self.rect.y += self.vy
+
+        # Stop moving when it touches the ground
+        if self.rect.bottom >= Height:
+            self.rect.bottom = Height
+            self.vy = 0  # Stop the vertical velocity
+
+
 
 all_sprites = pygame.sprite.Group()
 
