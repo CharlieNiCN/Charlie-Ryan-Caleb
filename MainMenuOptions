@@ -1,0 +1,209 @@
+#This is where all the game code will be
+
+#Tanks:
+
+#Physics engine: Gravity and power
+
+#Be able to move tanks left and right
+
+#Menu system -> Adjust power, angle, type of gun etc
+
+#Settings/preferences: Music On/Off
+
+#Get points for killing
+
+#Random terrain generation (For later)
+
+#Shop -> Buy powerups, new weapons, skins (colors, do later)
+
+import pygame
+import math
+
+# Initialize Pygame
+pygame.init()
+
+Width = 640
+Height = 480
+SIZE = (Width, Height)
+white = (255,255,255) 
+lightcolor = (170,170,170)  
+dark = (100,100,100)
+scores = []
+
+screen = pygame.display.set_mode(SIZE)
+clock = pygame.time.Clock()
+width = screen.get_width() 
+height = screen.get_height() 
+
+
+# ---------------------------
+# Initialize global variables
+
+circle_x = 200
+circle_y = 200
+
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+def draw_Button(text, font, color, surface, x, y):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+def inventory_menu():
+    running = True
+    back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.collidepoint(Py_Event.pos):
+                    main()  # Goes back to the main menu and method   
+
+        screen.fill(white)
+        
+        # Draw the back button
+        pygame.draw.rect(screen, dark, back_button)
+        back_font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('<-', back_font, white, screen, back_button.x + 10, back_button.y + 5)
+        
+        # Inventory content
+
+        pygame.display.flip()
+        clock.tick(30) 
+            
+def settings_menu():
+    running = True
+    back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.collidepoint(Py_Event.pos):
+                    main()  # Goes back to the main menu and method   
+
+        screen.fill(white)
+        
+        # Draw the back button
+        pygame.draw.rect(screen, dark, back_button)
+        back_font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('<-', back_font, white, screen, back_button.x + 10, back_button.y + 5)
+        
+        # Settings content
+
+        pygame.display.flip()
+        clock.tick(30) 
+    
+
+def shop_menu():
+    running = True
+    back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.collidepoint(Py_Event.pos):
+                    main()  # Goes back to the main menu and method   
+
+        screen.fill(white)
+        
+        # Draw the back button
+        pygame.draw.rect(screen, dark, back_button)
+        back_font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('<-', back_font, white, screen, back_button.x + 10, back_button.y + 5)
+        
+        # Shop content
+
+        pygame.display.flip()
+        clock.tick(30) 
+def game_loop():
+    running = True
+    back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
+                if back_button.collidepoint(Py_Event.pos):
+                    main()  # Goes back to the main menu and method   
+
+        screen.fill(white)
+        
+        # Draws the back button
+        pygame.draw.rect(screen, dark, back_button)
+        back_font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('<-', back_font, white, screen, back_button.x + 10, back_button.y + 5)
+        
+        # Game loop
+
+        pygame.display.flip()
+        clock.tick(30) 
+
+# Sprite class for the bullet 
+
+def main():
+    running = True
+    play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
+    settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
+    shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
+    inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
+
+    while running:
+    # EVENT HANDLING
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Spawn a new sprite at the mouse click position
+                mouse_x, mouse_y = event.pos
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.collidepoint(event.pos):
+                        game_loop()
+                if settings_button.collidepoint(event.pos):
+                        settings_menu()
+                if shop_button.collidepoint(event.pos):
+                        shop_menu()
+                if inventory_button.collidepoint(event.pos):
+                        inventory_menu()
+        keys = pygame.key.get_pressed() 
+
+        font = pygame.font.SysFont(None, 55)
+        button_font = pygame.font.SysFont(None, 40)
+
+        screen.fill((255, 255, 255))  # always the first drawing command
+        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4 - 40)
+        draw_Button('Tanks', font, dark, screen, Width // 2 - 50, Height // 4 - 70)
+ # drawing the buttons
+        pygame.draw.rect(screen, lightcolor, play_button)
+        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
+        pygame.draw.rect(screen, lightcolor, settings_button)
+        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
+        pygame.draw.rect(screen, lightcolor, shop_button)
+        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
+        pygame.draw.rect(screen, lightcolor, inventory_button)
+        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
+        pygame.display.flip()
+
+
+    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
+
+    pygame.display.flip()  # Flip the display
+    clock.tick(30)  # Cap the frame rate
+    
+    #---------------------------
+    
+    pygame.quit()
+
+
+main()
