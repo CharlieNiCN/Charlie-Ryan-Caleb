@@ -1,21 +1,3 @@
-#This is where all the game code will be
-
-#Tanks:
-
-#Physics engine: Gravity and power
-
-#Be able to move tanks left and right
-
-#Menu system -> Adjust power, angle, type of gun etc
-
-#Settings/preferences: Music On/Off
-
-#Get points for killing
-
-#Random terrain generation (For later)
-
-#Shop -> Buy powerups, new weapons, skins (colors, do later)
-
 import pygame
 import math
 
@@ -25,98 +7,40 @@ pygame.init()
 Width = 640
 Height = 480
 SIZE = (Width, Height)
-white = (255,255,255) 
-lightcolor = (170,170,170)  
-dark = (100,100,100)
+white = (255, 255, 255)
+black = (0, 0, 0)
+lightcolor = (170, 170, 170)
+dark = (100, 100, 100)
 scores = []
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
-width = screen.get_width() 
-height = screen.get_height() 
-
-
-# ---------------------------
-# Initialize global variables
-
-circle_x = 200
-circle_y = 200
-
+width = screen.get_width()
+height = screen.get_height()
 
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+
 def draw_Button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-def inventory_menu():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if (Py_Event.type == pygame.QUIT):
-                running = False
-            screen.fill(white)
-            #inventory menu 
-
-            pygame.display.flip()
-            clock.tick(30)
-            
-def settings_menu():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                running = False
-                main()
-
-        screen.fill(white)
-    #setting
-
-        pygame.display.flip()
-        clock.tick(30)
-    
-
-def shop_menu():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                running = False
-                main()
-
-        screen.fill(white)
-      #shop
-
-        pygame.display.flip()
-        clock.tick(30) 
-def game_loop():
-    running = True
-    while running:
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                running = False
-                main()
-        screen.fill(white)
-        # put game code here
-        pygame.display.flip()
-        clock.tick(30)
-
 # Sprite class for the bullet 
-class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
-    def __init__(self, x, y, vx, vy): #x,y are starting position, vx,vy is the speed in x and y
+class Bullet(pygame.sprite.Sprite):  # MUST CHANGE LATER AND UPDATE
+    def __init__(self, x, y, vx, vy):  # x,y are starting position, vx,vy is the speed in x and y
         super().__init__()
-        self.image = pygame.Surface((50, 50))
-        self.image.fill(WHITE)
+        self.image = pygame.Surface((10, 10))
+        self.image.fill(black)  # Changed to black to be more visible
         self.rect = self.image.get_rect(center=(x, y))
         self.vx = vx
         self.vy = vy
-        self.gravity = 0.5 #gravity
+        self.gravity = 0.5  # gravity
 
     def update(self):
-        # Update velocity with gravity
+        global bullet
         self.vy += self.gravity
 
         # Update the position based on velocity
@@ -126,6 +50,8 @@ class Bullet(pygame.sprite.Sprite): #MUST CHANGE LATER AND UPDATE
         # Boundary checking to keep the sprite within the screen
         if self.rect.left < 0 or self.rect.right > Width or self.rect.bottom > Height:
             self.kill()  # Remove the sprite from all groups
+            bullet = None
+
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -135,6 +61,7 @@ class PowerUp(pygame.sprite.Sprite):
         self.vy = 2  # Slow falling speed
 
     def update(self):
+        global powerup
         # Update the position based on velocity
         self.rect.y += self.vy
 
@@ -142,12 +69,14 @@ class PowerUp(pygame.sprite.Sprite):
         if self.rect.bottom >= Height:
             self.rect.bottom = Height
             self.vy = 0  # Stop the vertical velocity
-
-
+            powerup = None
 
 all_sprites = pygame.sprite.Group()
+bullet = None  # Variable to track the bullet
+powerup = None  # Variable to track the power-up
 
 def main():
+    global bullet, powerup
     running = True
     play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
     settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
@@ -155,63 +84,31 @@ def main():
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
 
     while running:
-    # EVENT HANDLING
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-            # Spawn a new sprite at the mouse click position
+            elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
                 mouse_x, mouse_y = event.pos
                 vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
                 vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                sprite = Bullet(mouse_x, mouse_y, vx, vy)
-                all_sprites.add(sprite)
+                bullet = Bullet(mouse_x, mouse_y, vx, vy)
+                all_sprites.add(bullet)
                 print('Bullet spawned at:', mouse_x, mouse_y)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and powerup is None:
+                    x = 50
+                    y = 30
+                    powerup = PowerUp(400, 400)
+                    all_sprites.add(powerup)
+                    print("Powerup Spawned")
 
+        screen.fill(white)  # Clear the screen
+        all_sprites.update()  # Update all sprites
+        all_sprites.draw(screen)  # Draw all sprites
 
+        pygame.display.flip()  # Flip the display
+        clock.tick(30)  # Cap the frame rate
 
-        #if event.type == pygame.MOUSEBUTTONDOWN:
-        #    if play_button.collidepoint(event.pos):
-    #                game_loop()
-        #    if settings_button.collidepoint(event.pos):
-      #              settings_menu()
-        #    if shop_button.collidepoint(event.pos):
-      #              shop_menu()
-        #    if inventory_button.collidepoint(event.pos):
-      #              inventory_menu()
-            keys = pygame.key.get_pressed() 
-
-        font = pygame.font.SysFont(None, 55)
-        button_font = pygame.font.SysFont(None, 40)
-
-        screen.fill((255, 255, 255))  # always the first drawing command
-        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4 - 40)
-        draw_Button('Tanks', font, dark, screen, Width // 2 - 50, Height // 4 - 70)
- # drawing the buttons
-        pygame.draw.rect(screen, lightcolor, play_button)
-        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
-        pygame.draw.rect(screen, lightcolor, settings_button)
-        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
-        pygame.draw.rect(screen, lightcolor, shop_button)
-        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
-        pygame.draw.rect(screen, lightcolor, inventory_button)
-        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)        
-        pygame.display.flip()
-
-
-    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
-
-  
-    all_sprites.update()
-
-    pygame.display.flip()  # Flip the display
-    clock.tick(30)  # Cap the frame rate
-    
-    #---------------------------
-    
     pygame.quit()
 
-
 main()
-
