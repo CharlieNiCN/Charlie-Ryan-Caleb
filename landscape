@@ -1,5 +1,6 @@
 import pygame
-
+import math
+import sys
 
 pygame.init()
 
@@ -15,8 +16,10 @@ clock = pygame.time.Clock()
 
 circle_x = 65
 circle_y = 220
+
 rect_x = 0
 rect_y = 200
+
 circle1_x = 200
 circle1_y = 270
 
@@ -25,11 +28,41 @@ rect1_y = 250
 
 circle2_x = 500
 circle2_y = 290
+
 rect3_x = 500
 rect3_y = 190
+
 rect4_x = -120
 rect4_y = 149
 # ---------------------------
+  
+# make floor
+floor = (circle_x, circle_y)
+floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
+floor_2 = (circle1_x, circle1_y)
+floor_3 = pygame.Rect(rect1_x, rect1_y, 200, 500)
+floor_4 = (circle2_x, circle2_y)
+floor_5 = pygame.Rect(rect3_x, rect3_y, 200, 500)
+floor_6 = pygame.Rect(rect4_x, rect4_y, 190, 1000)
+
+
+# collisions
+def circle_collision(circle_center, circle_radius, rect):
+    rect_center = (rect.centerx, rect.centery)
+    distance = math.hypot(rect_center[0] - circle_center[0], rect_center[1] - circle_center[1])
+    return distance < circle_radius + rect.width // 2
+
+def green_tank_circle_collision(circle_center, circle_radius, rect):
+        rect_center = (rect.centerx, rect.centery)
+        distance = math.hypot(rect_center[0] - circle_center[0], rect_center[1] - circle_center[1])
+        return distance < circle_radius + rect.width // 2
+    
+
+def red_tank_circle_collision(floor, 70, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor[0], red_center[1] - floor[1])
+    return distance < 70 + red_tank_width // 2
+
 
 running = True
 while running:
@@ -51,6 +84,11 @@ while running:
     pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), 100)
     pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
     pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
+
+
+
+
+
 
     # Must be the last two lines
     # of the game loop
