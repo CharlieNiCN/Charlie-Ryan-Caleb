@@ -45,7 +45,7 @@ while running:
     # All game math and comparisons happen here
 
     # DRAWING
-    screen.fill((255, 255, 255))  # always the first drawing command
+    
     pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
     pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
 
