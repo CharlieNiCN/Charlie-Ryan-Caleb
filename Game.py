@@ -29,16 +29,16 @@ def draw_Button(text, font, color, surface, x, y):
     surface.blit(textobj, textrect)
 
 # Sprite class for the bullet 
-class Bullet(pygame.sprite.Sprite):  # MUST CHANGE LATER AND UPDATE
+class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, vx, vy):  # x,y are starting position, vx,vy is the speed in x and y
         super().__init__()
-        self.image = pygame.Surface((20, 20), pygame.SRCALPHA)  # Create a transparent surface
-        pygame.draw.circle(self.image, black, (10, 10), 10)  # Draw a black circle with radius 10
+        self.radius = 5
+        self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)  # Create a transparent surface
+        pygame.draw.circle(self.image, black, (self.radius, self.radius), self.radius)  # Draw a black circle
         self.rect = self.image.get_rect(center=(x, y))
         self.vx = vx
         self.vy = vy
         self.gravity = 0.5  # gravity
-
 
     def update(self):
         global bullet
