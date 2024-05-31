@@ -85,7 +85,7 @@ def inventory_menu():
             for ii, item in enumerate(row):
                 item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120)
                 pygame.draw.rect(screen, Blue if item == 'Blue' else Red if item == 'Red' else Green if item == 'Green' else Yellow if item == 'Yellow' else Purple if item == 'Purple' else Orange if item == 'Orange' else dark, item_button)
-                draw_Button(item, back_font, white, screen, item_button.x + 12 item_button.y + 35)
+                draw_Button(item, back_font, white, screen, item_button.x + 12, item_button.y + 35)
 
         pygame.display.flip()
         clock.tick(30)
