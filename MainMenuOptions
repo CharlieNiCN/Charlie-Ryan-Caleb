@@ -7,11 +7,20 @@ pygame.init()
 Width = 640
 Height = 480
 SIZE = (Width, Height)
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 white = (255,255,255) 
 lightcolor = (170,170,170)  
 dark = (0,0,0)
-scores = []
+Blue = (0,0,255)
+Red = (255,0,0)
+Green = (0,120,0)
+Yellow= (255,255,0)
+Purple = (160,30,240)
+Orange = (230,160,0)
 
+scores = []
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 width = screen.get_width() 
@@ -29,9 +38,7 @@ circle_x = 200
 circle_y = 200
 
 
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+
 def draw_Button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
     textrect = textobj.get_rect()
@@ -41,6 +48,11 @@ def draw_Button(text, font, color, surface, x, y):
 def inventory_menu():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    colors_inventory = [['Blue', 'Red', 'Green'], ['Yellow', 'Purple', 'Orange']]
+    power_ups_inventory = [['Power Up 1', 'Power Up 2', 'Power Up 3'], ['Power Up 4', 'Power Up 5', 'Power Up 6']]
+    current_page = 0
+    page_Buttons = [pygame.Rect(Width - 110, 10, 100, 50), pygame.Rect(Width - 310, 10, 160, 50)]  # Moved to the left by another 60 pixels and increased length by 30
+
     while running:
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
@@ -48,7 +60,11 @@ def inventory_menu():
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
-                    main()  # Goes back to the main menu and method   
+                    main()  # Goes back to the main menu and method
+                if page_Buttons[0].collidepoint(Py_Event.pos):
+                    current_page = 0  # Switch to colors page
+                if page_Buttons[1].collidepoint(Py_Event.pos):
+                    current_page = 1  # Switch to power-ups page
 
         screen.fill(white)
         
@@ -57,11 +73,24 @@ def inventory_menu():
         back_font = pygame.font.SysFont('timesnewroman', 40)
         draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
         
-        # Inventory content
+        # Draw the Power-up and Colors buttons
+        pygame.draw.rect(screen, dark, page_Buttons[0])
+        draw_Button('Skins', back_font, white, screen, page_Buttons[0].x + 10, page_Buttons[0].y + 5)
+        pygame.draw.rect(screen, dark, page_Buttons[1])
+        draw_Button('Power-ups', back_font, white, screen, page_Buttons[1].x + 10, page_Buttons[1].y + 5)
+
+        # Display inventory items as buttons
+        inventory_items = colors_inventory if current_page == 0 else power_ups_inventory
+        for i, row in enumerate(inventory_items):
+            for ii, item in enumerate(row):
+                item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120)
+                pygame.draw.rect(screen, Blue if item == 'Blue' else Red if item == 'Red' else Green if item == 'Green' else Yellow if item == 'Yellow' else Purple if item == 'Purple' else Orange if item == 'Orange' else dark, item_button)
+                draw_Button(item, back_font, white, screen, item_button.x + 12 item_button.y + 35)
 
         pygame.display.flip()
-        clock.tick(30) 
-            
+        clock.tick(30)
+
+
 def settings_menu():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
