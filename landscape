@@ -1,6 +1,5 @@
 import pygame
 import math
-import sys
 
 pygame.init()
 
@@ -16,18 +15,21 @@ clock = pygame.time.Clock()
 
 circle_x = 65
 circle_y = 220
+circle_rad = 70
 
 rect_x = 0
 rect_y = 200
 
 circle1_x = 200
 circle1_y = 270
+circle1_rad = 70
 
 rect1_x = 250
 rect1_y = 250
 
 circle2_x = 500
 circle2_y = 290
+circle2_rad = 100
 
 rect3_x = 500
 rect3_y = 190
@@ -47,22 +49,35 @@ floor_6 = pygame.Rect(rect4_x, rect4_y, 190, 1000)
 
 
 # collisions
-def circle_collision(circle_center, circle_radius, rect):
-    rect_center = (rect.centerx, rect.centery)
-    distance = math.hypot(rect_center[0] - circle_center[0], rect_center[1] - circle_center[1])
-    return distance < circle_radius + rect.width // 2
+def green_tank_circle_collision(floor, circle_rad, green_tank):
+    green_tank_center = (green_tank_x, green_tank_y)
+    distance = math.hypot(green_tank_center[0] - floor[0], red_tank_center[1] - floor[1])
+    return distance < 70 + green_tank_width // 2
 
-def green_tank_circle_collision(circle_center, circle_radius, rect):
-        rect_center = (rect.centerx, rect.centery)
-        distance = math.hypot(rect_center[0] - circle_center[0], rect_center[1] - circle_center[1])
-        return distance < circle_radius + rect.width // 2
-    
+def green_tank_circle2_collision(floor_2, circle1_rad, green_tank):
+    green_tank_center = (green_tank_x, green_tank_y)
+    distance = math.hypot(green_tank_center[0] - floor_2[0], red_tank_center[1] - floor_2[1])
+    return distance < 70 + green_tank_width // 2
 
-def red_tank_circle_collision(floor, 70, red_tank):
-    red_tank_center = (red_tank_x, red_tank_y)
-    distance = math.hypot(red_tank_center[0] - floor[0], red_center[1] - floor[1])
+def green_tank_circle3_collision(floor_4, circle2_rad, green_tank):
+    green_tank_center = (green_tank_x, green_tank_y)
+    distance = math.hypot(green_tank_center[0] - floor_4[0], red_tank_center[1] - floor_4[1])
     return distance < 70 + red_tank_width // 2
 
+def red_tank_circle_collision(floor, circle_rad, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor[0], red_tank_center[1] - floor[1])
+    return distance < 70 + red_tank_width // 2
+
+def red_tank_circle2_collision(floor_2, circle1_rad, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor_2[0], red_tank_center[1] - floor_2[1])
+    return distance < 70 + red_tank_width // 2
+
+def red_tank_circle3_collision(floor_4, circle2_rad, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor_4[0], red_tank_center[1] - floor_4[1])
+    return distance < 70 + red_tank_width // 2
 
 running = True
 while running:
@@ -77,11 +92,33 @@ while running:
     # DRAWING
     screen.fill((140, 170, 255))  # always the first drawing command
 
-    pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), 70)
+
+    if green_tank.colliderect(floor_1):
+        green_tank_y = floor_1.top - green_tank.height
+    if green_tank.colliderect(floor_3):
+        green_tank_y = floor_3.top - green_tank.height
+    if green_tank.colliderect(floor_5):
+        green_tank_y = floor_5.top - green_tank.height
+    if green_tank.colliderect(floor_6):
+        green_tank_y = floor_6.top - green_tank.height
+    
+    
+
+    if red_tank.colliderect(floor_1):
+        red_tank_y = floor_1.top - red_tank.height
+    if red_tank.colliderect(floor_3):
+        red_tank.y = floor_3.top - red_tank.height
+    if red_tank.colliderect(floor_5):
+        red_tank_y = floor_5.top - player_tank.height
+    if red_tank.colliderect(floor_6):
+        red_tank_y = floor_6.top - player_tank.height
+    
+
+    pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
     pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
     pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
-    pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), 70)
-    pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), 100)
+    pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
+    pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
     pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
     pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
 
