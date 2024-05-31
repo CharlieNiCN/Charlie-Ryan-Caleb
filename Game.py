@@ -1,47 +1,47 @@
 #This is where all the game code will be
-
 #Tanks:
-
 #Physics engine: Gravity and power
-
 #Be able to move tanks left and right
-
 #Menu system -> Adjust power, angle, type of gun etc
-
 #Settings/preferences: Music On/Off
-
 #Get points for killing
-
 #Random terrain generation (For later)
-
 #Shop -> Buy powerups, new weapons, skins (colors, do later)
 
 import pygame
 import math
-
+from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 # Initialize Pygame
+
 pygame.init()
 
-Width = 640
-Height = 480
-SIZE = (Width, Height)
-white = (255,255,255) 
-lightcolor = (170,170,170)  
-dark = (100,100,100)
-scores = []
+WIDTH = 640
+HEIGHT = 480
+SIZE = (WIDTH, HEIGHT)
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
-width = screen.get_width() 
-height = screen.get_height() 
 
 
 # ---------------------------
 # Initialize global variables
+green_tank_x = 200
+green_tank_y = 200
+green_tank_width = 4
 
-circle_x = 200
-circle_y = 200
+red_tank_x = 600
+red_tank_y = 200
+red_tank_width = 4
 
+# make the tank
+green_tank =pygame.image.load("green_tank(1).png")
+green_tank_rect = green_tank.get_rect()
+green_tank.center = screen.get_rect().center
+print(green_tank_rect)
+red_tank =pygame.image.load("red_tank.png")
+red_tank_rect = red_tank.get_rect()
+red_tank.center = screen.get_rect().center
+print(red_tank_rect)
 
 # Colors
 WHITE = (255, 255, 255)
@@ -152,7 +152,24 @@ def main():
                 print('Bullet spawned at:', mouse_x, mouse_y)
 
 
+    # DRAWING
+      screen.fill((255, 255, 255))  # always the first drawing command
+      pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
+      pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
 
+      for event in pygame.event.get():
+          if event.type == pygame.K_LEFT and red_tank_x > 0:
+              red_tank_x -= 10
+          if event.type == pygame.K_RIGHT and red_tank_x < 0:
+              red_tank_x += 1
+          if event.type == pygame.K_a and green_tank_x > 0:
+              green_tank_x -= 10
+          if event.type == pygame.K_d and green_tank_x < 0:
+              green_tank_x += 10
+        
+
+    
+=======
         #if event.type == pygame.MOUSEBUTTONDOWN:
         #    if play_button.collidepoint(event.pos):
     #                game_loop()
@@ -182,18 +199,14 @@ def main():
         pygame.display.flip()
 
 
-    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
+     pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
+
 
   
-    all_sprites.update()
+     all_sprites.update()
 
-    pygame.display.flip()  # Flip the display
-    clock.tick(30)  # Cap the frame rate
-    
-    #---------------------------
-    
-    pygame.quit()
-
-
+     pygame.display.flip()  # Flip the display
+     clock.tick(30)  # Cap the frame rate
+   
+   pygame.quit()
 main()
-
