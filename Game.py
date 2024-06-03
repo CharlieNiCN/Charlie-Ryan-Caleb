@@ -1,5 +1,6 @@
 import pygame
 import math
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -74,7 +75,8 @@ class PowerUp(pygame.sprite.Sprite):
 
 all_sprites = pygame.sprite.Group()
 bullet = None  # Variable to track the bullet
-powerup = None  # Variable to track the power-up
+powerupNum = 0  # Variable to track the power-up
+
 
 def main():
     global bullet, powerup
@@ -85,6 +87,7 @@ def main():
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
 
     while running:
+        powerUpRNG = random.randint(1,30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -95,13 +98,10 @@ def main():
                 bullet = Bullet(mouse_x, mouse_y, vx, vy)
                 all_sprites.add(bullet)
                 print('Bullet spawned at:', mouse_x, mouse_y)
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT and powerup is None:
-                    x = 50
-                    y = 30
-                    powerup = PowerUp(400, 400)
-                    all_sprites.add(powerup)
-                    print("Powerup Spawned")
+            elif powerUpRNG == 1 and powerupNum =< 3:
+                powerup = PowerUp(random.randint(0, 640), 0)
+                all_sprites.add(powerup)
+
 
         screen.fill(white)  # Clear the screen
         all_sprites.update()  # Update all sprites
