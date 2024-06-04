@@ -37,6 +37,10 @@ lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
 scores = []
 
+background_image_path = "TanksBackround.jpg"
+background_image = pygame.image.load(background_image_path)
+background_image = pygame.transform.scale(background_image, (Width, Height))
+
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
@@ -396,6 +400,7 @@ def main():
             
             
         screen.fill((140, 170, 255))  # always the first drawing command
+        screen.blit(background_image, (0, 0))
 
         pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
         pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
