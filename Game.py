@@ -26,6 +26,16 @@ black = (0, 0, 0)
 lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
 scores = []
+Blue = (0,0,255)
+Red = (255,0,0)
+Green = (0,120,0)
+Yellow= (255,255,0)
+Purple = (160,30,240)
+Orange = (230,160,0)
+black = (0, 0, 0)
+lightcolor = (170, 170, 170)
+dark = (100, 100, 100)
+scores = []
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
@@ -236,6 +246,25 @@ def game_loop():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
+            elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
+                mouse_x, mouse_y = event.pos
+                vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+                vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+                bullet = Bullet(mouse_x, mouse_y, vx, vy)
+                all_sprites.add(bullet)
+                print('Bullet spawned at:', mouse_x, mouse_y)
+            elif powerUpRNG == 1 and powerupNum <= 3:
+                powerup = PowerUp(random.randint(0, 640), 0)
+                all_sprites.add(powerup)
+                powerUpRng += 1
+            if event.type == pygame.K_LEFT and red_tank_x > 0:
+                red_tank_x -= 10
+            if event.type == pygame.K_RIGHT and red_tank_x < 0:
+                red_tank_x += 1
+            if event.type == pygame.K_a and green_tank_x > 0:
+                green_tank_x -= 10
+            if event.type == pygame.K_d and green_tank_x < 0:
+                green_tank_x += 10
 
         screen.fill(white)
         
@@ -355,26 +384,17 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
-                mouse_x, mouse_y = event.pos
-                vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-                vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                bullet = Bullet(mouse_x, mouse_y, vx, vy)
-                all_sprites.add(bullet)
-                print('Bullet spawned at:', mouse_x, mouse_y)
-            elif powerUpRNG == 1 and powerupNum <= 3:
-                powerup = PowerUp(random.randint(0, 640), 0)
-                all_sprites.add(powerup)
-                powerUpRng += 1
-            if event.type == pygame.K_LEFT and red_tank_x > 0:
-                red_tank_x -= 10
-            if event.type == pygame.K_RIGHT and red_tank_x < 0:
-                red_tank_x += 1
-            if event.type == pygame.K_a and green_tank_x > 0:
-                green_tank_x -= 10
-            if event.type == pygame.K_d and green_tank_x < 0:
-                green_tank_x += 10
-
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.collidepoint(event.pos):
+                        game_loop()
+                if settings_button.collidepoint(event.pos):
+                        settings_menu()
+                if shop_button.collidepoint(event.pos):
+                        shop_menu()
+                if inventory_button.collidepoint(event.pos):
+                        inventory_menu()
+            
+            
         screen.fill((140, 170, 255))  # always the first drawing command
 
         pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
@@ -407,17 +427,6 @@ def main():
             red_tank_y = floor_6.top - red_tank.height
 
     
-
-        #if event.type == pygame.MOUSEBUTTONDOWN:
-        #    if play_button.collidepoint(event.pos):
-    #                game_loop()
-        #    if settings_button.collidepoint(event.pos):
-      #              settings_menu()
-        #    if shop_button.collidepoint(event.pos):
-      #              shop_menu()
-        #    if inventory_button.collidepoint(event.pos):
-      #              inventory_menu()
-            keys = pygame.key.get_pressed() 
 
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
