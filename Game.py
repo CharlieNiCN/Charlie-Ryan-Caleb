@@ -280,7 +280,6 @@ def main():
         
         
         #end code (MUST BE PUT AT THE BACK)
-        screen.fill(white)  # Clear the screen
         all_sprites.update()  # Update all sprites
         all_sprites.draw(screen)  # Draw all sprites
         pygame.display.flip()  # Flip the display
