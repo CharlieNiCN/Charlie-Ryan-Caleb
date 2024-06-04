@@ -1,5 +1,3 @@
-
-
 #This is where all the game code will be
 #Tanks:
 #Physics engine: Gravity and power
@@ -14,9 +12,13 @@ import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
+
+
 # Initialize Pygame
 
 pygame.init()
+pygame.mixer.init()
+pygame.mixer.music.load('Duality.mp3')
 
 Width = 640
 Height = 480
@@ -26,6 +28,7 @@ black = (0, 0, 0)
 lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
 scores = []
+
 
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
@@ -47,14 +50,14 @@ red_tank_y = 200
 red_tank_width = 4
 
 # make the tank
-green_tank =pygame.image.load("green_tank(1).png")
-green_tank_rect = green_tank.get_rect()
-green_tank.center = screen.get_rect().center
-print(green_tank_rect)
-red_tank =pygame.image.load("red_tank.png")
-red_tank_rect = red_tank.get_rect()
-red_tank.center = screen.get_rect().center
-print(red_tank_rect)
+#green_tank =pygame.image.load("green_tank(1).png")
+#green_tank_rect = green_tank.get_rect()
+#green_tank.center = screen.get_rect().center
+#print(green_tank_rect)
+#red_tank =pygame.image.load("red_tank.png")
+#red_tank_rect = red_tank.get_rect()
+#red_tank.center = screen.get_rect().center
+#print(red_tank_rect)
 
 
 # Colors
@@ -124,9 +127,10 @@ def main():
     shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
     screen.fill((255, 255, 255))  # always the first drawing command
-    pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
-    pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
+    # pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
+    # pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
 
+    pygame.mixer.music.play(-1)
     while running:
         powerUpRNG = random.randint(1,30)
         for event in pygame.event.get():
@@ -139,7 +143,7 @@ def main():
                 bullet = Bullet(mouse_x, mouse_y, vx, vy)
                 all_sprites.add(bullet)
                 print('Bullet spawned at:', mouse_x, mouse_y)
-            elif powerUpRNG == 1 and powerupNum =< 3:
+            elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
                 powerUpRng += 1
