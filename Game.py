@@ -14,6 +14,8 @@ from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
 
 
+
+
 # Initialize Pygame
 
 pygame.init()
@@ -117,7 +119,7 @@ class PowerUp(pygame.sprite.Sprite):
 all_sprites = pygame.sprite.Group()
 bullet = None  # Variable to track the bullet
 powerupNum = 0  # Variable to track the # of power-ups on the board
-
+powerUpRNG = 0
 
 def main():
     global bullet, powerup
@@ -146,7 +148,7 @@ def main():
             elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
-                powerUpRng += 1
+                powerUpNum += 1
             if event.type == pygame.K_LEFT and red_tank_x > 0:
                 red_tank_x -= 10
             if event.type == pygame.K_RIGHT and red_tank_x < 0:
