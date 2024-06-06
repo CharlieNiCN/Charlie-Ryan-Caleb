@@ -1,5 +1,5 @@
 import pygame
-
+import math
 
 pygame.init()
 
@@ -13,10 +13,71 @@ clock = pygame.time.Clock()
 # ---------------------------
 # Initialize global variables
 
-circle_x = 200
-circle_y = 200
+circle_x = 65
+circle_y = 220
+circle_rad = 70
 
+rect_x = 0
+rect_y = 200
+
+circle1_x = 200
+circle1_y = 270
+circle1_rad = 70
+
+rect1_x = 250
+rect1_y = 250
+
+circle2_x = 500
+circle2_y = 290
+circle2_rad = 100
+
+rect3_x = 500
+rect3_y = 190
+
+rect4_x = -120
+rect4_y = 149
 # ---------------------------
+
+# make floor
+floor = (circle_x, circle_y)
+floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
+floor_2 = (circle1_x, circle1_y)
+floor_3 = pygame.Rect(rect1_x, rect1_y, 200, 500)
+floor_4 = (circle2_x, circle2_y)
+floor_5 = pygame.Rect(rect3_x, rect3_y, 200, 500)
+floor_6 = pygame.Rect(rect4_x, rect4_y, 190, 1000)
+
+
+# collisions
+def green_tank_circle_collision(floor, circle_rad, green_tank):
+    green_tank_center = (green_tank_x, green_tank_y)
+    distance = math.hypot(green_tank_center[0] - floor[0], red_tank_center[1] - floor[1])
+    return distance < 70 + green_tank_width // 2
+
+def green_tank_circle2_collision(floor_2, circle1_rad, green_tank):
+    green_tank_center = (green_tank_x, green_tank_y)
+    distance = math.hypot(green_tank_center[0] - floor_2[0], red_tank_center[1] - floor_2[1])
+    return distance < 70 + green_tank_width // 2
+
+def green_tank_circle3_collision(floor_4, circle2_rad, green_tank):
+    green_tank_center = (green_tank_x, green_tank_y)
+    distance = math.hypot(green_tank_center[0] - floor_4[0], red_tank_center[1] - floor_4[1])
+    return distance < 70 + red_tank_width // 2
+
+def red_tank_circle_collision(floor, circle_rad, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor[0], red_tank_center[1] - floor[1])
+    return distance < 70 + red_tank_width // 2
+
+def red_tank_circle2_collision(floor_2, circle1_rad, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor_2[0], red_tank_center[1] - floor_2[1])
+    return distance < 70 + red_tank_width // 2
+
+def red_tank_circle3_collision(floor_4, circle2_rad, red_tank):
+    red_tank_center = (red_tank_x, red_tank_y)
+    distance = math.hypot(red_tank_center[0] - floor_4[0], red_tank_center[1] - floor_4[1])
+    return distance < 70 + red_tank_width // 2
 
 running = True
 while running:
@@ -29,9 +90,42 @@ while running:
     # All game math and comparisons happen here
 
     # DRAWING
-    screen.fill((255, 255, 255))  # always the first drawing command
+    screen.fill((140, 170, 255))  # always the first drawing command
 
-    pygame.draw.circle(screen, (0, 0, 255), (circle_x, circle_y), 30)
+
+    if green_tank.colliderect(floor_1):
+        green_tank_y = floor_1.top - green_tank.height
+    if green_tank.colliderect(floor_3):
+        green_tank_y = floor_3.top - green_tank.height
+    if green_tank.colliderect(floor_5):
+        green_tank_y = floor_5.top - green_tank.height
+    if green_tank.colliderect(floor_6):
+        green_tank_y = floor_6.top - green_tank.height
+
+
+
+    if red_tank.colliderect(floor_1):
+        red_tank_y = floor_1.top - red_tank.height
+    if red_tank.colliderect(floor_3):
+        red_tank.y = floor_3.top - red_tank.height
+    if red_tank.colliderect(floor_5):
+        red_tank_y = floor_5.top - player_tank.height
+    if red_tank.colliderect(floor_6):
+        red_tank_y = floor_6.top - player_tank.height
+
+
+    pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
+    pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
+    pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
+    pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
+    pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
+    pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
+    pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
+
+
+
+
+
 
     # Must be the last two lines
     # of the game loop
