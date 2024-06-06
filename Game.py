@@ -1,5 +1,3 @@
-
-
 #This is where all the game code will be
 #Tanks:
 #Physics engine: Gravity and power
@@ -14,9 +12,15 @@ import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
+
+
+
+
 # Initialize Pygame
 
 pygame.init()
+pygame.mixer.init()
+pygame.mixer.music.load('Duality.mp3')
 
 Width = 640
 Height = 480
@@ -41,6 +45,7 @@ background_image_path = "TanksBackround.jpg"
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (Width, Height))
 
+
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
@@ -61,14 +66,14 @@ red_tank_y = 200
 red_tank_width = 4
 
 # make the tank
-green_tank =pygame.image.load("green_tank(1).png")
-green_tank_rect = green_tank.get_rect()
-green_tank.center = screen.get_rect().center
-print(green_tank_rect)
-red_tank =pygame.image.load("red_tank.png")
-red_tank_rect = red_tank.get_rect()
-red_tank.center = screen.get_rect().center
-print(red_tank_rect)
+#green_tank =pygame.image.load("green_tank(1).png")
+#green_tank_rect = green_tank.get_rect()
+#green_tank.center = screen.get_rect().center
+#print(green_tank_rect)
+#red_tank =pygame.image.load("red_tank.png")
+#red_tank_rect = red_tank.get_rect()
+#red_tank.center = screen.get_rect().center
+#print(red_tank_rect)
 
 
 circle_x = 65
@@ -370,7 +375,7 @@ class PowerUp(pygame.sprite.Sprite):
 all_sprites = pygame.sprite.Group()
 bullet = None  # Variable to track the bullet
 powerupNum = 0  # Variable to track the # of power-ups on the board
-
+powerUpRNG = 0
 
 def main():
     global bullet, powerup
@@ -380,14 +385,16 @@ def main():
     shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
     screen.fill((255, 255, 255))  # always the first drawing command
-    pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
-    pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
+    # pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
+    # pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
 
+    pygame.mixer.music.play(-1)
     while running:
         powerUpRNG = random.randint(1,30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.collidepoint(event.pos):
                         game_loop()
@@ -430,6 +437,7 @@ def main():
             red_tank_y = floor_5.top - red_tank.height
         if red_tank.colliderect(floor_6):
             red_tank_y = floor_6.top - red_tank.height
+
 
     
 
