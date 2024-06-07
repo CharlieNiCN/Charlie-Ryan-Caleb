@@ -12,7 +12,7 @@ import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
-
+from pygame import event
 
 
 
@@ -39,24 +39,17 @@ Orange = (230,160,0)
 black = (0, 0, 0)
 lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
+redFuel = 0
+greenFuel = 0
 scores = []
 
 background_image_path = "TanksBackround.jpg"
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (Width, Height))
 
-
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
-
-
-
-
-
-
-# ---------------------------
-# Initialize global variables
 green_tank_x = 200
 green_tank_y = 200
 green_tank_width = 4
@@ -66,14 +59,14 @@ red_tank_y = 200
 red_tank_width = 4
 
 # make the tank
-#green_tank =pygame.image.load("green_tank(1).png")
-#green_tank_rect = green_tank.get_rect()
-#green_tank.center = screen.get_rect().center
-#print(green_tank_rect)
-#red_tank =pygame.image.load("red_tank.png")
-#red_tank_rect = red_tank.get_rect()
-#red_tank.center = screen.get_rect().center
-#print(red_tank_rect)
+green_tank =pygame.image.load("green_tank.png")
+green_tank_rect = green_tank.get_rect()
+green_tank.center = screen.get_rect().center
+print(green_tank_rect)
+red_tank =pygame.image.load("red_tank.png")
+red_tank_rect = red_tank.get_rect()
+red_tank.center = screen.get_rect().center
+print(red_tank_rect)
 
 
 circle_x = 65
@@ -138,7 +131,6 @@ def inventory_menu():
                     current_page = 0  # Switch to colors page
                 if page_Buttons[1].collidepoint(Py_Event.pos):
                     current_page = 1  # Switch to power-ups page
-
                 if current_page == 0:  # Only changes color on the colors page 
                     for i, row in enumerate(colors_inventory):
                         for ii, item in enumerate(row): # loops each item
@@ -266,14 +258,18 @@ def game_loop():
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
                 powerUpRng += 1
-            if event.type == pygame.K_LEFT and red_tank_x > 0:
+            if event.type == pygame.K_LEFT and red_tank_x > 0 and redFuel > 0:
                 red_tank_x -= 10
-            if event.type == pygame.K_RIGHT and red_tank_x < 0:
+                redFuel -= 5
+            if event.type == pygame.K_RIGHT and red_tank_x < 0 and redFuel > 0:
                 red_tank_x += 1
-            if event.type == pygame.K_a and green_tank_x > 0:
+                redFuel -= 5
+            if event.type == pygame.K_a and green_tank_x > 0 and greenFuel > 0:
                 green_tank_x -= 10
-            if event.type == pygame.K_d and green_tank_x < 0:
+                greenFuel -= 5
+            if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
                 green_tank_x += 10
+                greenFuel -= 15
 
         screen.fill(white)
         
