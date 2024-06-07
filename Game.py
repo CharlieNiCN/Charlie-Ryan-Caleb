@@ -194,10 +194,12 @@ def settings_menu():
         clock.tick(30) 
     
 def shop_menu():
+    global coins, Inventory_power_ups, power_up_prices
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
     purchase_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)  # Center the purchase button
     continuee = True
+    next_power_up = 1  # Start with the first power-up
 
     while running:
         for Py_Event in pygame.event.get():
@@ -209,14 +211,13 @@ def shop_menu():
                     main()  # Goes back to the main menu and method
                 if purchase_button.collidepoint(Py_Event.pos):
                     Next_Cost = next_power_up * 10
-                    if Next_Cost in power_up_prices and coins >= power_up_prices[next_power_up]:
-                        coins -= power_up_prices[next_power_up]
-                        Inventory_power_ups.append(next_power_up)
-                        del power_up_prices[next_power_up]
-                        if power_up_prices:
-                            continuee = True
-                        else:
-                            next_power_up = None
+                    if Next_Cost in power_up_prices and coins >= Next_Cost:
+                        coins -= Next_Cost
+                        Inventory_power_ups.append(f"Power Up {next_power_up}")
+                        power_up_prices.remove(Next_Cost)
+                        next_power_up += 1
+                        if next_power_up * 10 not in power_up_prices:
+                            continuee = False
 
         screen.fill(white)
         
@@ -235,7 +236,7 @@ def shop_menu():
 
         pygame.display.flip()
         clock.tick(30)
-
+#remind: make the backround another color
 # make floor
 floor = (circle_x, circle_y)
 floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
