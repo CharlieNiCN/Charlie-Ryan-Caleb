@@ -254,6 +254,11 @@ def game_loop():
                 bullet = Bullet(mouse_x, mouse_y, vx, vy)
                 all_sprites.add(bullet)
                 print('Bullet spawned at:', mouse_x, mouse_y)
+            if pygame.sprite.spritecollide(bullet, powerup, dokill=True):
+                print("Bullet hit the target!")
+                redFuel += 100
+                greenFuel += 100
+                bullet.kill()
             elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
@@ -270,6 +275,7 @@ def game_loop():
             if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
                 green_tank_x += 10
                 greenFuel -= 15
+
 
         screen.fill(white)
         
