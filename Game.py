@@ -39,8 +39,7 @@ Orange = (230,160,0)
 black = (0, 0, 0)
 lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
-redFuel = 0
-greenFuel = 0
+
 scores = []
 
 background_image_path = "TanksBackround.jpg"
@@ -53,10 +52,14 @@ clock = pygame.time.Clock()
 green_tank_x = 200
 green_tank_y = 200
 green_tank_width = 4
+greenFuel = 0
+greenHealth = 3
 
 red_tank_x = 600
 red_tank_y = 200
 red_tank_width = 4
+redFuel = 0
+redHealth = 3
 
 # make the tank
 green_tank =pygame.image.load("green_tank.png")
@@ -259,6 +262,7 @@ def game_loop():
                 redFuel += 100
                 greenFuel += 100
                 bullet.kill()
+            
             elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
