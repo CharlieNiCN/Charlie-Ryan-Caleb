@@ -12,7 +12,7 @@ import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
-
+import json
 
 
 
@@ -103,6 +103,29 @@ rect4_x = -120
 rect4_y = 149
 # ---------------------------
 
+def load_progress():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
+    try:
+        with open("progress.json", "r") as file:
+            progress = json.load(file)
+            coins = progress.get("coins", 100)
+            next_power_up = progress.get("next_power_up", 1)
+            Inventory_power_ups = progress.get("Inventory_power_ups", ["Default Damage"])
+            power_up_prices = set(progress.get("power_up_prices", [10, 20, 30, 40, 50]))
+    except FileNotFoundError:
+        coins = 100  # Default to 100 coins if file not found
+
+# Save progress to JSON file
+def save_progress():
+    progress = {
+        "coins": coins,
+        "next_power_up": next_power_up,
+        "Inventory_power_ups": Inventory_power_ups,
+        "power_up_prices": list(power_up_prices)
+    }
+    with open("progress.json", "w") as file:
+        json.dump(progress, file)
+        
 # make floor
 floor = (circle_x, circle_y)
 floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
