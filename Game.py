@@ -404,6 +404,7 @@ powerUpRNG = 0
 
 def main():
     global bullet, powerup
+    load_progress()
     running = True
     play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
     settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
@@ -418,6 +419,7 @@ def main():
         powerUpRNG = random.randint(1,30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                save_progress()
                 running = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -488,7 +490,7 @@ def main():
         all_sprites.draw(screen)  # Draw all sprites
         pygame.display.flip()  # Flip the display
         clock.tick(30)  # Cap the frame rate
-
+    save_progress()    
     pygame.quit()
 
 main()
