@@ -39,7 +39,7 @@ Orange = (230,160,0)
 black = (0, 0, 0)
 lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
-
+playerTurnNum=0
 scores = []
 
 background_image_path = "TanksBackround.jpg"
@@ -251,12 +251,22 @@ def game_loop():
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
             elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
-                mouse_x, mouse_y = event.pos
-                vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-                vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                bullet = Bullet(mouse_x, mouse_y, vx, vy)
-                all_sprites.add(bullet)
-                print('Bullet spawned at:', mouse_x, mouse_y)
+                if playerTurnNum == 0:#player1
+                    vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+                    vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+                    green_tank_x, green_tank_y = event.pos
+                    bullet = Bullet(green_tank_x, green_tank_y, vx, vy)
+                    all_sprites.add(bullet)
+                    playerTurnNum=1
+                else:
+                    vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+                    vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+                    green_tank_x, green_tank_y = event.pos
+                    bullet = Bullet(green_tank_x, green_tank_y, vx, vy)
+                    all_sprites.add(bullet)
+                    playerTurnNum=0
+
+
             if pygame.sprite.spritecollide(bullet, powerup, dokill=True):
                 print("Bullet hit the target!")
                 redFuel += 100
