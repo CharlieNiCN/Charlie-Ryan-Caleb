@@ -1,17 +1,8 @@
-# This is where all the game code will be
-# Tanks:
-# Physics engine: Gravity and power
-# Be able to move tanks left and right
-# Menu system -> Adjust power, angle, type of gun etc
-# Settings/preferences: Music On/Off
-# Get points for killing
-# Random terrain generation (For later)
-# Shop -> Buy powerups, new weapons, skins (colors, do later)
-
 import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
+import json  # Import the JSON module
 
 # Initialize Pygame
 pygame.init()
@@ -48,9 +39,31 @@ background_image_path = "TanksBackround.jpg"
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (Width, Height))
 
-# ---------------------------
-# Initialize global variables
+# Load progress from JSON file
+def load_progress():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
+    try:
+        with open("progress.json", "r") as file:
+            progress = json.load(file)
+            coins = progress.get("coins", 100)
+            next_power_up = progress.get("next_power_up", 1)
+            Inventory_power_ups = progress.get("Inventory_power_ups", ["Default Damage"])
+            power_up_prices = set(progress.get("power_up_prices", [10, 20, 30, 40, 50]))
+    except FileNotFoundError:
+        coins = 100  # Default to 100 coins if file not found
 
+# Save progress to JSON file
+def save_progress():
+    progress = {
+        "coins": coins,
+        "next_power_up": next_power_up,
+        "Inventory_power_ups": Inventory_power_ups,
+        "power_up_prices": list(power_up_prices)
+    }
+    with open("progress.json", "w") as file:
+        json.dump(progress, file)
+
+# Initialize global variables
 circle_x = 65
 circle_y = 220
 circle_rad = 70
@@ -75,7 +88,6 @@ rect3_y = 190
 rect4_x = -120
 rect4_y = 149
 
-# ---------------------------
 def draw_Button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
     textrect = textobj.get_rect()
@@ -96,9 +108,11 @@ def inventory_menu():
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
                 pygame.quit()
+                save_progress()  # Save progress when exiting
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:  # if clicked
                 if back_button.collidepoint(Py_Event.pos):  # if back button is clicked on the button area
+                    save_progress()  # Save progress when exiting the inventory menu
                     main()  # Goes back to the main menu and method
                 if page_Buttons[0].collidepoint(Py_Event.pos):
                     current_page = 0  # Switch to colors page
@@ -164,9 +178,11 @@ def settings_menu():
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
                 pygame.quit()
+                save_progress()  # Save progress when exiting
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
+                    save_progress()  # Save progress when exiting the settings menu
                     main()  # Goes back to the main menu and method
                 if music_button.collidepoint(Py_Event.pos):  # if user clicked on music button
                     music_on = not music_on  # pdate music boolean
@@ -203,9 +219,11 @@ def shop_menu():
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
                 pygame.quit()
+                save_progress()  # Save progress when exiting
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
+                    save_progress()  # Save progress when exiting the shop menu
                     main()  # Goes back to the main menu and method
                 if purchase_button.collidepoint(Py_Event.pos):
                     Next_Cost = next_power_up * 10
@@ -259,52 +277,12 @@ def draw_Button(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-# Sprite class for the bullet 
-def game_loop():
-    running = True
-    back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if back_button.collidepoint(event.pos):
-                    main()  # Goes back to the main menu and method   
-            elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
-                mouse_x, mouse_y = event.pos
-                vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-                vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                bullet = Bullet(mouse_x, mouse_y, vx, vy)
-                all_sprites.add(bullet)
-                print('Bullet spawned at:', mouse_x, mouse_y)
-            elif powerUpRNG == 1 and powerupNum <= 3:
-                powerup = PowerUp(random.randint(0, 640), 0)
-                all_sprites.add(powerup)
-                powerUpRng += 1
-            if event.type == pygame.K_LEFT and red_tank_x > 0:
-                red_tank_x -= 10
-            if event.type == pygame.K_RIGHT and red_tank_x < 0:
-                red_tank_x += 1
-            if event.type == pygame.K_a and green_tank_x > 0:
-                green_tank_x -= 10
-            if event.type == pygame.K_d and green_tank_x < 0:
-                green_tank_x += 10
+# Sprite class for the bullet
 
-        screen.fill(white)
-        
-        # Draws the back button
-        pygame.draw.rect(screen, dark, back_button)
-        back_font = pygame.font.SysFont('timesnewroman', 40)
-        draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
-        
-        # Game loop
-
-        pygame.display.flip()
-        clock.tick(30) 
 
 def main():
     global bullet, powerup
+    load_progress()  # Load progress when the game starts
     running = True
     play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
     settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
@@ -313,10 +291,11 @@ def main():
     screen.fill((255, 255, 255))  # always the first drawing command
     
     while running:
-        powerUpRNG = random.randint(1,30)
+        powerUpRNG = random.randint(1, 30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                save_progress()  # Save progress when exiting
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -340,7 +319,7 @@ def main():
         pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
         pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
 
-        keys = pygame.key.get_pressed() 
+        keys = pygame.key.get_pressed()
 
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
