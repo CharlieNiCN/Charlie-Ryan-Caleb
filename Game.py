@@ -43,6 +43,10 @@ lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
 playerTurnNum=0
 scores = []
+coins = 100
+Inventory_power_ups = ["Default Damage"] # array to store prices of each power up
+power_up_prices = {10, 20, 30, 40, 50}
+next_power_up = 1
 
 background_image_path = "TanksBackround.jpg"
 background_image = pygame.image.load(background_image_path)
@@ -123,7 +127,16 @@ def save_progress():
     }
     with open("progress.json", "w") as file:
         json.dump(progress, file)
-        
+
+# Reset progress
+def reset_progress():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
+    coins = 100
+    next_power_up = 1
+    Inventory_power_ups = ["Default Damage"]
+    power_up_prices = {10, 20, 30, 40, 50}
+    save_progress()
+    
 # make floor
 floor = (circle_x, circle_y)
 floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
@@ -140,7 +153,14 @@ def draw_Button(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
+def draw_Button(text, font, color, surface, x, y):
+    textobj = font.render(text, True, color)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
 def inventory_menu():
+    global coins, Inventory_power_ups
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
     colors_inventory = [['Blue', 'Red', 'Green'], ['Yellow', 'Purple', 'Orange']]
@@ -153,20 +173,23 @@ def inventory_menu():
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
                 pygame.quit()
+                save_progress()  # Save progress when exiting
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:  # if clicked
                 if back_button.collidepoint(Py_Event.pos):  # if back button is clicked on the button area
+                    save_progress()  # Save progress when exiting the inventory menu
                     main()  # Goes back to the main menu and method
                 if page_Buttons[0].collidepoint(Py_Event.pos):
                     current_page = 0  # Switch to colors page
                 if page_Buttons[1].collidepoint(Py_Event.pos):
                     current_page = 1  # Switch to power-ups page
-                if current_page == 0:  # Only changes color on the colors page 
+
+                if current_page == 0:  # Only check for color clicks on the colors page
                     for i, row in enumerate(colors_inventory):
-                        for ii, item in enumerate(row): # loops each item
-                            item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120) # definted variable to store where the button is
-                            if item_button.collidepoint(Py_Event.pos): # if the location of the button is clicked
-                                if item == 'Blue': # if it is x color then change background color to x
+                        for ii, item in enumerate(row):
+                            item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120)
+                            if item_button.collidepoint(Py_Event.pos):
+                                if item == 'Blue':
                                     current_bg_color = Blue
                                 elif item == 'Red':
                                     current_bg_color = Red
@@ -179,7 +202,7 @@ def inventory_menu():
                                 elif item == 'Orange':
                                     current_bg_color = Orange
 
-        screen.fill(current_bg_color) #puts the updated color into the background
+        screen.fill(current_bg_color)  # Update background color
         
         # Draw the back button
         pygame.draw.rect(screen, dark, back_button)
@@ -192,34 +215,47 @@ def inventory_menu():
         pygame.draw.rect(screen, dark, page_Buttons[1])
         draw_Button('Power-Ups', back_font, white, screen, page_Buttons[1].x + 10, page_Buttons[1].y + 5)
 
-        # shows inventory items as buttons this is is chat gpt
-        inventory_items = colors_inventory if current_page == 0 else power_ups_inventory
-        for i, row in enumerate(inventory_items):
-            for ii, item in enumerate(row):
-                item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120)
-                pygame.draw.rect(screen, Blue if item == 'Blue' else Red if item == 'Red' else Green if item == 'Green' else Yellow if item == 'Yellow' else Purple if item == 'Purple' else Orange if item == 'Orange' else dark, item_button)
-                draw_Button(item, back_font, white, screen, item_button.x + 12, item_button.y + 35)
+        # Display inventory items as buttons
+        if current_page == 0:
+            inventory_items = colors_inventory
+            for i, row in enumerate(inventory_items):
+                for ii, item in enumerate(row):
+                    item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120)
+                    pygame.draw.rect(screen, Blue if item == 'Blue' else Red if item == 'Red' else Green if item == 'Green' else Yellow if item == 'Yellow' else Purple if item == 'Purple' else Orange if item == 'Orange' else dark, item_button)
+                    draw_Button(str(item), back_font, white, screen, item_button.x + 12, item_button.y + 35)
+        else:
+            for i, row in enumerate(power_ups_inventory):
+                for ii, item in enumerate(row):
+                    item_button = pygame.Rect(100 + ii * 120, 100 + i * 120, 120, 120)
+                    item_color = Green if item in Inventory_power_ups else dark
+                    pygame.draw.rect(screen, item_color, item_button)
+                    draw_Button(str(item), back_font, white, screen, item_button.x + 12, item_button.y + 35)
 
         pygame.display.flip()
         clock.tick(30)
 
-
-
 def settings_menu():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
     music_on = True  # boolean music off or on
-    music_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50) #button location of the music
+    music_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)  # button location of the music
+    reset_button = pygame.Rect(Width // 2 - 100, Height // 2 + 50, 200, 50)  # button location of the reset progress
+
     while running:
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
                 pygame.quit()
+                save_progress()  # Save progress when exiting
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
-                    main()  # Goes back to the main menu and method 
-                if music_button.collidepoint(Py_Event.pos): #if user clicked on music button
+                    save_progress()  # Save progress when exiting the settings menu
+                    main()  # Goes back to the main menu and method
+                if music_button.collidepoint(Py_Event.pos):  # if user clicked on music button
                     music_on = not music_on  # pdate music boolean
+                if reset_button.collidepoint(Py_Event.pos):  # if user clicked on reset button
+                    reset_progress()  # Reset progress
 
         screen.fill(white)
         
@@ -228,7 +264,7 @@ def settings_menu():
         back_font = pygame.font.SysFont('timesnewroman', 40)
         draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
         
-        #Draw the Title thing on the top that says Settings
+        # Draw the Title thing on the top that says Settings
         title_font = pygame.font.SysFont('timesnewroman', 55)
         draw_Button('Settings', title_font, dark, screen, Width // 2 - 100, Height // 4 - 70)
 
@@ -237,23 +273,39 @@ def settings_menu():
         pygame.draw.rect(screen, dark, music_button)
         draw_Button(music_text, back_font, white, screen, music_button.x + 10, music_button.y + 10)
 
-        # Settings content
+        # Draw the reset progress button
+        pygame.draw.rect(screen, dark, reset_button)
+        draw_Button('Reset', back_font, white, screen, reset_button.x + 10, reset_button.y + 10)
 
         pygame.display.flip()
-        clock.tick(30) 
-    
+        clock.tick(30)
 
 def shop_menu():
+    global coins, Inventory_power_ups, power_up_prices, next_power_up
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    purchase_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)  # Center the purchase button
+    continuee = True
+
     while running:
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
                 pygame.quit()
+                save_progress()  # Save progress when exiting
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
-                    main()  # Goes back to the main menu and method   
+                    save_progress()  # Save progress when exiting the shop menu
+                    main()  # Goes back to the main menu and method
+                if purchase_button.collidepoint(Py_Event.pos):
+                    Next_Cost = next_power_up * 10
+                    if Next_Cost in power_up_prices and coins >= Next_Cost:
+                        coins -= Next_Cost
+                        Inventory_power_ups.append(f"Power Up {next_power_up}")
+                        power_up_prices.remove(Next_Cost)
+                        next_power_up += 1
+                        if next_power_up * 10 not in power_up_prices:
+                            continuee = False
 
         screen.fill(white)
         
@@ -261,11 +313,22 @@ def shop_menu():
         pygame.draw.rect(screen, dark, back_button)
         back_font = pygame.font.SysFont('timesnewroman', 40)
         draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
-        
-        # Shop content
+
+        # Draw the purchase button if there are power-ups left to buy
+        if continuee and next_power_up * 10 in power_up_prices:
+            pygame.draw.rect(screen, dark, purchase_button)
+            cost = next_power_up * 10
+            draw_Button(f'Buy Power Up {next_power_up}: ({cost} coins)', back_font, white, screen, purchase_button.x + 10, purchase_button.y + 10)
+        else:
+            draw_Button('No more upgrades available', back_font, dark, screen, Width // 2 - 150, Height // 2 - 25)
+
+        # Draw coin display
+        pygame.draw.ellipse(screen, (255, 215, 0), (Width - 200, 20, 170, 60))  # Larger sideways oval
+        coin_font = pygame.font.SysFont('timesnewroman', 30)
+        draw_Button(f'Coins: {coins}', coin_font, black, screen, Width - 190, 35)
 
         pygame.display.flip()
-        clock.tick(30) 
+        clock.tick(30)
 def game_loop():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
