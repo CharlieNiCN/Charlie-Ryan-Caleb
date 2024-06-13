@@ -62,21 +62,17 @@ green_tank_height = 3
 red_tank_x = 600
 red_tank_y = 200
 red_tank_width = 4
-
 redFuel = 0
 redHealth = 3
-
 red_tank_height = 3
 
 
 # make the tank
 green_tank =pygame.image.load("green_tank.png")
 green_tank_rect = green_tank.get_rect()
-green_tank.center = screen.get_rect().center
 print(green_tank_rect)
 red_tank =pygame.image.load("red_tank.png")
 red_tank_rect = red_tank.get_rect()
-red_tank.center = screen.get_rect().center
 print(red_tank_rect)
 
 
@@ -317,12 +313,14 @@ def game_loop():
                 red_tank_x -= 10
                 redFuel -= 5
             if event.type == pygame.K_RIGHT and red_tank_x < 0 and redFuel > 0:
-                red_tank_x += 1
+                red_tank_x += 10
                 redFuel -= 5
             if event.type == pygame.K_a and green_tank_x > 0 and greenFuel > 0:
                 green_tank_x -= 10
                 greenFuel -= 5
             if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
+                green_tank_x += 10
+                greenFuel -+ 5
 
             if Py_Event.type == pygame.K_LEFT and red_tank_x > 0:
                 red_tank_x -= 10
