@@ -68,10 +68,10 @@ red_tank_height = 3
 
 
 # make the tank
-green_tank =pygame.image.load("green_tank.png")
+green_tank = pygame.image.load("green_tank.png")
 green_tank_rect = green_tank.get_rect()
 print(green_tank_rect)
-red_tank =pygame.image.load("red_tank.png")
+red_tank = pygame.image.load("red_tank.png")
 red_tank_rect = red_tank.get_rect()
 print(red_tank_rect)
 
