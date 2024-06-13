@@ -13,6 +13,8 @@ import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
 from pygame import event
+import json
+
 
 
 
@@ -54,12 +56,18 @@ green_tank_y = 200
 green_tank_width = 4
 greenFuel = 0
 greenHealth = 3
+green_tank_height = 3
+
 
 red_tank_x = 600
 red_tank_y = 200
 red_tank_width = 4
+
 redFuel = 0
 redHealth = 3
+
+red_tank_height = 3
+
 
 # make the tank
 green_tank =pygame.image.load("green_tank.png")
@@ -97,6 +105,29 @@ rect4_x = -120
 rect4_y = 149
 # ---------------------------
 
+def load_progress():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
+    try:
+        with open("progress.json", "r") as file:
+            progress = json.load(file)
+            coins = progress.get("coins", 100)
+            next_power_up = progress.get("next_power_up", 1)
+            Inventory_power_ups = progress.get("Inventory_power_ups", ["Default Damage"])
+            power_up_prices = set(progress.get("power_up_prices", [10, 20, 30, 40, 50]))
+    except FileNotFoundError:
+        coins = 100  # Default to 100 coins if file not found
+
+# Save progress to JSON file
+def save_progress():
+    progress = {
+        "coins": coins,
+        "next_power_up": next_power_up,
+        "Inventory_power_ups": Inventory_power_ups,
+        "power_up_prices": list(power_up_prices)
+    }
+    with open("progress.json", "w") as file:
+        json.dump(progress, file)
+        
 # make floor
 floor = (circle_x, circle_y)
 floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
@@ -250,6 +281,7 @@ def game_loop():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
+
             elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
                 if playerTurnNum == 0:#player1
                     vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
@@ -273,10 +305,14 @@ def game_loop():
                 greenFuel += 100
                 bullet.kill()
             
+
+
+
             elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
                 powerUpRng += 1
+
             if event.type == pygame.K_LEFT and red_tank_x > 0 and redFuel > 0:
                 red_tank_x -= 10
                 redFuel -= 5
@@ -287,6 +323,15 @@ def game_loop():
                 green_tank_x -= 10
                 greenFuel -= 5
             if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
+
+            if Py_Event.type == pygame.K_LEFT and red_tank_x > 0:
+                red_tank_x -= 10
+            if Py_Event.type == pygame.K_RIGHT and red_tank_x < 0:
+                red_tank_x += 1
+            if Py_Event.type == pygame.K_a and green_tank_x > 0:
+                green_tank_x -= 10
+            if Py_Event.type == pygame.K_d and green_tank_x < 0:
+
                 green_tank_x += 10
                 greenFuel -= 15
 
@@ -395,6 +440,7 @@ powerUpRNG = 0
 
 def main():
     global bullet, powerup
+    load_progress()
     running = True
     play_button = pygame.Rect(Width // 2 - 100, Height // 2 - 100, 200, 50)
     settings_button = pygame.Rect(Width // 2 - 100, Height // 2 - 30, 200, 50)
@@ -409,6 +455,7 @@ def main():
         powerUpRNG = random.randint(1,30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                save_progress()
                 running = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -434,25 +481,25 @@ def main():
         pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
 
 
-        if green_tank.colliderect(floor_1):
-            green_tank_y = floor_1.top - green_tank.height
-        if green_tank.colliderect(floor_3):
-            green_tank_y = floor_3.top - green_tank.height
-        if green_tank.colliderect(floor_5):
-            green_tank_y = floor_5.top - green_tank.height
-        if green_tank.colliderect(floor_6):
-            green_tank_y = floor_6.top - green_tank.height
+        if pygame.green_tank.colliderect(floor_1):
+            green_tank_y = floor_1.top - green_tank_height
+        if pygame.green_tank.colliderect(floor_3):
+            green_tank_y = floor_3.top - green_tank_height
+        if pygame.green_tank.colliderect(floor_5):
+            green_tank_y = floor_5.top - green_tank_height
+        if pygame.green_tank.colliderect(floor_6):
+            green_tank_y = floor_6.top - green_tank_height
 
 
 
-        if red_tank.colliderect(floor_1):
-            red_tank_y = floor_1.top - red_tank.height
-        if red_tank.colliderect(floor_3):
-            red_tank.y = floor_3.top - red_tank.height
-        if red_tank.colliderect(floor_5):
-            red_tank_y = floor_5.top - red_tank.height
-        if red_tank.colliderect(floor_6):
-            red_tank_y = floor_6.top - red_tank.height
+        if pygame.red_tank.colliderect(floor_1):
+            red_tank_y = floor_1.top - red_tank_height
+        if pygame.red_tank.colliderect(floor_3):
+            red_tank_y = floor_3.top - red_tank_height
+        if pygame.red_tank.colliderect(floor_5):
+            red_tank_y = floor_5.top - red_tank_height
+        if pygame.red_tank.colliderect(floor_6):
+            red_tank_y = floor_6.top - red_tank_height
 
 
     
@@ -479,7 +526,7 @@ def main():
         all_sprites.draw(screen)  # Draw all sprites
         pygame.display.flip()  # Flip the display
         clock.tick(30)  # Cap the frame rate
-
+    save_progress()    
     pygame.quit()
 
 main()

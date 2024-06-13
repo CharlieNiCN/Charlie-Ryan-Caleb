@@ -92,6 +92,14 @@ while running:
     # DRAWING
     screen.fill((140, 170, 255))  # always the first drawing command
 
+    pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
+    pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
+    pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
+    pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
+    pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
+    pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
+    pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
+
 
     if green_tank.colliderect(floor_1):
         green_tank_y = floor_1.top - green_tank.height
@@ -112,18 +120,6 @@ while running:
         red_tank_y = floor_5.top - player_tank.height
     if red_tank.colliderect(floor_6):
         red_tank_y = floor_6.top - player_tank.height
-
-
-    pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
-    pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
-    pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
-    pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
-    pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
-    pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
-    pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
-
-
-
 
 
 
