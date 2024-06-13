@@ -63,6 +63,15 @@ def save_progress():
     with open("progress.json", "w") as file:
         json.dump(progress, file)
 
+# Reset progress
+def reset_progress():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
+    coins = 100
+    next_power_up = 1
+    Inventory_power_ups = ["Default Damage"]
+    power_up_prices = {10, 20, 30, 40, 50}
+    save_progress()
+
 # Initialize global variables
 circle_x = 65
 circle_y = 220
@@ -170,10 +179,13 @@ def inventory_menu():
         clock.tick(30)
 
 def settings_menu():
+    global coins, next_power_up, Inventory_power_ups, power_up_prices
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
     music_on = True  # boolean music off or on
     music_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)  # button location of the music
+    reset_button = pygame.Rect(Width // 2 - 100, Height // 2 + 50, 200, 50)  # button location of the reset progress
+
     while running:
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
@@ -186,6 +198,8 @@ def settings_menu():
                     main()  # Goes back to the main menu and method
                 if music_button.collidepoint(Py_Event.pos):  # if user clicked on music button
                     music_on = not music_on  # pdate music boolean
+                if reset_button.collidepoint(Py_Event.pos):  # if user clicked on reset button
+                    reset_progress()  # Reset progress
 
         screen.fill(white)
         
@@ -203,7 +217,9 @@ def settings_menu():
         pygame.draw.rect(screen, dark, music_button)
         draw_Button(music_text, back_font, white, screen, music_button.x + 10, music_button.y + 10)
 
-        # Settings content
+        # Draw the reset progress button
+        pygame.draw.rect(screen, dark, reset_button)
+        draw_Button('Reset', back_font, white, screen, reset_button.x + 10, reset_button.y + 10)
 
         pygame.display.flip()
         clock.tick(30)
