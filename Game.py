@@ -12,7 +12,9 @@ import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
+from pygame import event
 import json
+
 
 
 
@@ -39,43 +41,43 @@ Orange = (230,160,0)
 black = (0, 0, 0)
 lightcolor = (170, 170, 170)
 dark = (100, 100, 100)
+playerTurnNum=0
 scores = []
 
 background_image_path = "TanksBackround.jpg"
 background_image = pygame.image.load(background_image_path)
 background_image = pygame.transform.scale(background_image, (Width, Height))
 
-
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
-
-
-
-
-
-
-# ---------------------------
-# Initialize global variables
 green_tank_x = 200
 green_tank_y = 200
 green_tank_width = 4
+greenFuel = 0
+greenHealth = 3
 green_tank_height = 3
+
 
 red_tank_x = 600
 red_tank_y = 200
 red_tank_width = 4
+
+redFuel = 0
+redHealth = 3
+
 red_tank_height = 3
 
+
 # make the tank
-#green_tank =pygame.image.load("green_tank(1).png")
-#green_tank_rect = green_tank.get_rect()
-#green_tank.center = screen.get_rect().center
-#print(green_tank_rect)
-#red_tank =pygame.image.load("red_tank.png")
-#red_tank_rect = red_tank.get_rect()
-#red_tank.center = screen.get_rect().center
-#print(red_tank_rect)
+green_tank =pygame.image.load("green_tank.png")
+green_tank_rect = green_tank.get_rect()
+green_tank.center = screen.get_rect().center
+print(green_tank_rect)
+red_tank =pygame.image.load("red_tank.png")
+red_tank_rect = red_tank.get_rect()
+red_tank.center = screen.get_rect().center
+print(red_tank_rect)
 
 
 circle_x = 65
@@ -163,7 +165,6 @@ def inventory_menu():
                     current_page = 0  # Switch to colors page
                 if page_Buttons[1].collidepoint(Py_Event.pos):
                     current_page = 1  # Switch to power-ups page
-
                 if current_page == 0:  # Only changes color on the colors page 
                     for i, row in enumerate(colors_inventory):
                         for ii, item in enumerate(row): # loops each item
@@ -280,17 +281,49 @@ def game_loop():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
-            elif Py_Event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
-                mouse_x, mouse_y = Py_Event.pos
-                vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-                vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                bullet = Bullet(mouse_x, mouse_y, vx, vy)
-                all_sprites.add(bullet)
-                print('Bullet spawned at:', mouse_x, mouse_y)
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
+                if playerTurnNum == 0:#player1
+                    vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+                    vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+                    green_tank_x, green_tank_y = event.pos
+                    bullet = Bullet(green_tank_x, green_tank_y, vx, vy)
+                    all_sprites.add(bullet)
+                    playerTurnNum=1
+                else:
+                    vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
+                    vy = -10  # Set initial vertical velocity (- means going up, + means going down)
+                    green_tank_x, green_tank_y = event.pos
+                    bullet = Bullet(green_tank_x, green_tank_y, vx, vy)
+                    all_sprites.add(bullet)
+                    playerTurnNum=0
+
+
+            if pygame.sprite.spritecollide(bullet, powerup, dokill=True):
+                print("Bullet hit the target!")
+                redFuel += 100
+                greenFuel += 100
+                bullet.kill()
+            
+
+
+
             elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
                 powerUpRng += 1
+
+            if event.type == pygame.K_LEFT and red_tank_x > 0 and redFuel > 0:
+                red_tank_x -= 10
+                redFuel -= 5
+            if event.type == pygame.K_RIGHT and red_tank_x < 0 and redFuel > 0:
+                red_tank_x += 1
+                redFuel -= 5
+            if event.type == pygame.K_a and green_tank_x > 0 and greenFuel > 0:
+                green_tank_x -= 10
+                greenFuel -= 5
+            if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
+
             if Py_Event.type == pygame.K_LEFT and red_tank_x > 0:
                 red_tank_x -= 10
             if Py_Event.type == pygame.K_RIGHT and red_tank_x < 0:
@@ -298,7 +331,10 @@ def game_loop():
             if Py_Event.type == pygame.K_a and green_tank_x > 0:
                 green_tank_x -= 10
             if Py_Event.type == pygame.K_d and green_tank_x < 0:
+
                 green_tank_x += 10
+                greenFuel -= 15
+
 
         screen.fill(white)
         
