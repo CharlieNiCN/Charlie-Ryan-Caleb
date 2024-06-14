@@ -332,6 +332,14 @@ def shop_menu():
 def game_loop():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    # Plus and minus buttons for power slider
+    power_minus_button = pygame.Rect(power_slider_rect.x - 20, power_slider_rect.y - 5, 20, 20)  # Smaller size
+    power_plus_button = pygame.Rect(power_slider_rect.x + power_slider_rect.width + 5, power_slider_rect.y - 5, 20, 20)  # Smaller size
+
+    # Plus and minus buttons for angle slider
+    angle_minus_button = pygame.Rect(angle_slider_rect.x - 20, angle_slider_rect.y - 5, 20, 20)  # Smaller size
+    angle_plus_button = pygame.Rect(angle_slider_rect.x + angle_slider_rect.width + 5, angle_slider_rect.y - 5, 20, 20)  # Smaller size
+    
     while running:
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
@@ -403,6 +411,28 @@ def game_loop():
         pygame.draw.rect(screen, dark, back_button)
         back_font = pygame.font.SysFont('timesnewroman', 40)
         draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
+
+         # Draw sliders and buttons
+        pygame.draw.rect(screen, dark, power_slider_rect)
+        pygame.draw.circle(screen, lightcolor, (power_slider_rect.x + int(power / 100 * power_slider_rect.width), power_slider_rect.y + power_slider_rect.height // 2), 5)
+        slider_font = pygame.font.SysFont('timesnewroman', 20)
+        draw_Button(f'Power: {int(power)}', slider_font, black, screen, power_slider_rect.x, power_slider_rect.y - 20)
+
+        pygame.draw.rect(screen, dark, angle_slider_rect)
+        pygame.draw.circle(screen, lightcolor, (angle_slider_rect.x + int((angle + 90) / 180 * angle_slider_rect.width), angle_slider_rect.y + angle_slider_rect.height // 2), 5)
+        draw_Button(f'Angle: {int(angle)}', slider_font, black, screen, angle_slider_rect.x, angle_slider_rect.y - 20)
+
+        # Draw plus and minus buttons for power
+        pygame.draw.rect(screen, dark, power_minus_button)
+        draw_Button('-', slider_font, white, screen, power_minus_button.x + 5, power_minus_button.y + 2)
+        pygame.draw.rect(screen, dark, power_plus_button)
+        draw_Button('+', slider_font, white, screen, power_plus_button.x + 5, power_plus_button.y + 2)
+
+        # Draw plus and minus buttons for angle
+        pygame.draw.rect(screen, dark, angle_minus_button)
+        draw_Button('-', slider_font, white, screen, angle_minus_button.x + 5, angle_minus_button.y + 2)
+        pygame.draw.rect(screen, dark, angle_plus_button)
+        draw_Button('+', slider_font, white, screen, angle_plus_button.x + 5, angle_plus_button.y + 2)
         
         # Game loop
 
