@@ -568,17 +568,17 @@ def main():
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
 
-        draw_Button('Main Menu', font, dark, screen, Width // 2 - 100, Height // 4 - 40)
-        draw_Button('Tanks', font, dark, screen, Width // 2 - 50, Height // 4 - 70)
- # drawing the buttons
+        draw_Button('Main Menu', font, black, screen, Width // 2 - 100, Height // 4 - 40)  # Changed to black
+        draw_Button('Tanks', font, black, screen, Width // 2 - 50, Height // 4 - 70)  # Changed to black
+        # drawing the buttons
         pygame.draw.rect(screen, lightcolor, play_button)
-        draw_Button('Play', font, dark, screen, play_button.x + 50, play_button.y + 10) 
+        draw_Button('Play', font, black, screen, play_button.x + 50, play_button.y + 10)  # Changed to black
         pygame.draw.rect(screen, lightcolor, settings_button)
-        draw_Button('Settings', font, dark, screen, settings_button.x + 25, settings_button.y + 10)        
+        draw_Button('Settings', font, black, screen, settings_button.x + 25, settings_button.y + 10)  # Changed to black
         pygame.draw.rect(screen, lightcolor, shop_button)
-        draw_Button('Shop', font, dark, screen, shop_button.x + 50, shop_button.y + 10)      
+        draw_Button('Shop', font, black, screen, shop_button.x + 50, shop_button.y + 10)  # Changed to black
         pygame.draw.rect(screen, lightcolor, inventory_button)
-        draw_Button('Inventory', font, dark, screen, inventory_button.x + 25, inventory_button.y + 10)    
+        draw_Button('Inventory', font, black, screen, inventory_button.x + 25, inventory_button.y + 10)  # Changed to black  
         
         
         
