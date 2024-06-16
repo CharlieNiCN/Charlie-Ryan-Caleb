@@ -353,8 +353,6 @@ def game_loop():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
-                if back_button.collidepoint(Py_Event.pos):
-                    main()  # Goes back to the main menu and method
                 if power_minus_button.collidepoint(Py_Event.pos):
                     power = max(0, power - 1)
                 if power_plus_button.collidepoint(Py_Event.pos):
@@ -448,8 +446,7 @@ def game_loop():
         draw_Button('-', slider_font, white, screen, angle_minus_button.x + 5, angle_minus_button.y + 2)
         pygame.draw.rect(screen, dark, angle_plus_button)
         draw_Button('+', slider_font, white, screen, angle_plus_button.x + 5, angle_plus_button.y + 2)
-        
-        # Game loop
+
 
         pygame.display.flip()
         clock.tick(30) 
