@@ -70,16 +70,6 @@ redFuel = 0
 redHealth = 3
 red_tank_height = 3
 
-
-# make the tank
-green_tank = pygame.image.load("green_tank.png")
-green_tank_rect = green_tank.get_rect()
-print(green_tank_rect)
-red_tank = pygame.image.load("red_tank.png")
-red_tank_rect = red_tank.get_rect()
-print(red_tank_rect)
-
-
 circle_x = 65
 circle_y = 220
 circle_rad = 70
@@ -137,14 +127,6 @@ def reset_progress():
     power_up_prices = {10, 20, 30, 40, 50}
     save_progress()
     
-# make floor
-floor = (circle_x, circle_y)
-floor_1 = pygame.Rect(rect_x , rect_y, 200, 500)
-floor_2 = (circle1_x, circle1_y)
-floor_3 = pygame.Rect(rect1_x, rect1_y, 200, 500)
-floor_4 = (circle2_x, circle2_y)
-floor_5 = pygame.Rect(rect3_x, rect3_y, 200, 500)
-floor_6 = pygame.Rect(rect4_x, rect4_y, 190, 1000)
 
 #Menus
 def draw_Button(text, font, color, surface, x, y):
@@ -363,7 +345,7 @@ def game_loop():
                     angle = min(90, angle + 1)
 
             elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
-                if playerTurnNum == 0:#player1
+                if playerTurnNum == 0:#player1/greentank
                     vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
                     vy = -10  # Set initial vertical velocity (- means going up, + means going down)
                     green_tank_x, green_tank_y = event.pos
@@ -404,7 +386,9 @@ def game_loop():
                 greenFuel -= 5
             if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
                 green_tank_x += 10
-                greenFuel -+ 5
+                greenFuel -= 5
+
+
 
             if Py_Event.type == pygame.K_LEFT and red_tank_x > 0:
                 red_tank_x -= 10
@@ -413,7 +397,6 @@ def game_loop():
             if Py_Event.type == pygame.K_a and green_tank_x > 0:
                 green_tank_x -= 10
             if Py_Event.type == pygame.K_d and green_tank_x < 0:
-
                 green_tank_x += 10
                 greenFuel -= 15
 
@@ -492,7 +475,7 @@ def draw_Button(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-# Sprite class for the bullet 
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, vx, vy):  # x,y are starting position, vx,vy is the speed in x and y
         super().__init__()
@@ -535,11 +518,51 @@ class PowerUp(pygame.sprite.Sprite):
             self.rect.bottom = Height
             self.vy = 0  # Stop the vertical velocity
             powerup = None
+# Tank dimensions
+TANK_WIDTH = 50
+TANK_HEIGHT = 50
+
+class red_tank(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
+        self.image.fill(Red)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+class green_tank(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
+        self.image.fill(green)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+# make floor
+class Landscape(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((Width, Height))
+        self.image.fill(WHITE)
+        pygame.draw.polygon(self.image, (0, 128, 0), [(0, Height), (200, 400), (400, 500), (600, 300), (800, Height)])
+        pygame.draw.polygon
+        self.rect = self.image.get_rect()
+
 
 all_sprites = pygame.sprite.Group()
 bullet = None  # Variable to track the bullet
 powerupNum = 0  # Variable to track the # of power-ups on the board
 powerUpRNG = 0
+all_sprites.add(Landscape)
+all_sprites.add(red_tank)
+all_sprites.add(green_tank)
+
+tanks = pygame.sprite.Group()
+tanks.add(red_tank)
+tanks.add(green_tank)
+tanks = pygame.sprite.Group()
+tanks.add(red_tank)
+tanks.add(green_tank)
+
 
 def main():
     global bullet, powerup
@@ -550,8 +573,7 @@ def main():
     shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
     screen.fill((255, 255, 255))  # always the first drawing command
-    # pygame.draw.rect(screen, (100, 0, 0), green_tank_rect, green_tank_width)  # draw hit-box
-    # pygame.draw.rect(screen, (100, 0, 0), red_tank_rect, red_tank_width)  # draw hit-box
+
 
     pygame.mixer.music.play(-1)
     while running:
@@ -575,37 +597,8 @@ def main():
         screen.fill((140, 170, 255))  # always the first drawing command
         screen.blit(background_image, (0, 0))
 
-        pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
-        pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
-        pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
-        pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
-        pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
-        pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
-        pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
 
 
-        if pygame.green_tank.colliderect(floor_1):
-            green_tank_y = floor_1.top - green_tank_height
-        if pygame.green_tank.colliderect(floor_3):
-            green_tank_y = floor_3.top - green_tank_height
-        if pygame.green_tank.colliderect(floor_5):
-            green_tank_y = floor_5.top - green_tank_height
-        if pygame.green_tank.colliderect(floor_6):
-            green_tank_y = floor_6.top - green_tank_height
-
-
-
-        if pygame.red_tank.colliderect(floor_1):
-            red_tank_y = floor_1.top - red_tank_height
-        if pygame.red_tank.colliderect(floor_3):
-            red_tank_y = floor_3.top - red_tank_height
-        if pygame.red_tank.colliderect(floor_5):
-            red_tank_y = floor_5.top - red_tank_height
-        if pygame.red_tank.colliderect(floor_6):
-            red_tank_y = floor_6.top - red_tank_height
-
-
-    
 
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
