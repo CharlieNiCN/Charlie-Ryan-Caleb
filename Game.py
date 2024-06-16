@@ -332,6 +332,11 @@ def shop_menu():
 def game_loop():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    power_slider_rect = pygame.Rect(150, 15, 200, 10)  # Moved down by 5 units
+    angle_slider_rect = pygame.Rect(150, 45, 200, 10)  # Moved down by 5 units
+    power = 50  # Initial power value
+    angle = 45  # Initial angle value
+    
     # Plus and minus buttons for power slider
     power_minus_button = pygame.Rect(power_slider_rect.x - 20, power_slider_rect.y - 5, 20, 20)  # Smaller size
     power_plus_button = pygame.Rect(power_slider_rect.x + power_slider_rect.width + 5, power_slider_rect.y - 5, 20, 20)  # Smaller size
@@ -348,6 +353,16 @@ def game_loop():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
+                if back_button.collidepoint(Py_Event.pos):
+                    main()  # Goes back to the main menu and method
+                if power_minus_button.collidepoint(Py_Event.pos):
+                    power = max(0, power - 1)
+                if power_plus_button.collidepoint(Py_Event.pos):
+                    power = min(100, power + 1)
+                if angle_minus_button.collidepoint(Py_Event.pos):
+                    angle = max(-90, angle - 1)
+                if angle_plus_button.collidepoint(Py_Event.pos):
+                    angle = min(90, angle + 1)
 
             elif event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
                 if playerTurnNum == 0:#player1
