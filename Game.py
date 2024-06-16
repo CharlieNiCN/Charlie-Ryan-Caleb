@@ -319,18 +319,40 @@ def shop_menu():
 def game_loop():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
-    power_slider_rect = pygame.Rect(150, 15, 200, 10)  # Moved down by 5 units
-    angle_slider_rect = pygame.Rect(150, 45, 200, 10)  # Moved down by 5 units
-    power = 50  # Initial power value
-    angle = 45  # Initial angle value
-    
-    # Plus and minus buttons for power slider
-    power_minus_button = pygame.Rect(power_slider_rect.x - 20, power_slider_rect.y - 5, 20, 20)  # Smaller size
-    power_plus_button = pygame.Rect(power_slider_rect.x + power_slider_rect.width + 5, power_slider_rect.y - 5, 20, 20)  # Smaller size
 
-    # Plus and minus buttons for angle slider
-    angle_minus_button = pygame.Rect(angle_slider_rect.x - 20, angle_slider_rect.y - 5, 20, 20)  # Smaller size
-    angle_plus_button = pygame.Rect(angle_slider_rect.x + angle_slider_rect.width + 5, angle_slider_rect.y - 5, 20, 20)  # Smaller size
+    # Adjusted slider dimensions
+    slider_width = 100
+    slider_height = 10
+    
+    # Player 1 sliders
+    power_slider_rect_p1 = pygame.Rect(150, 15, slider_width, slider_height)  # Moved down by 5 units
+    angle_slider_rect_p1 = pygame.Rect(150, 45, slider_width, slider_height)  # Moved down by 5 units
+
+    # Player 2 sliders
+    power_slider_rect_p2 = pygame.Rect(Width - 250, 15, slider_width, slider_height)  # Moved to the right
+    angle_slider_rect_p2 = pygame.Rect(Width - 250, 45, slider_width, slider_height)  # Moved to the right
+    
+    power_p1 = 50  # Initial power value for player 1
+    angle_p1 = 45  # Initial angle value for player 1
+    power_p2 = 50  # Initial power value for player 2
+    angle_p2 = 45  # Initial angle value for player 2
+    
+    # Plus and minus buttons for power slider of player 1
+    power_minus_button_p1 = pygame.Rect(power_slider_rect_p1.x - 20, power_slider_rect_p1.y - 5, 20, 20)  # Smaller size
+    power_plus_button_p1 = pygame.Rect(power_slider_rect_p1.x + power_slider_rect_p1.width + 5, power_slider_rect_p1.y - 5, 20, 20)  # Smaller size
+
+    # Plus and minus buttons for angle slider of player 1
+    angle_minus_button_p1 = pygame.Rect(angle_slider_rect_p1.x - 20, angle_slider_rect_p1.y - 5, 20, 20)  # Smaller size
+    angle_plus_button_p1 = pygame.Rect(angle_slider_rect_p1.x + angle_slider_rect_p1.width + 5, angle_slider_rect_p1.y - 5, 20, 20)  # Smaller size
+    
+    # Plus and minus buttons for power slider of player 2
+    power_minus_button_p2 = pygame.Rect(power_slider_rect_p2.x - 20, power_slider_rect_p2.y - 5, 20, 20)  # Smaller size
+    power_plus_button_p2 = pygame.Rect(power_slider_rect_p2.x + power_slider_rect_p2.width + 5, power_slider_rect_p2.y - 5, 20, 20)  # Smaller size
+
+    # Plus and minus buttons for angle slider of player 2
+    angle_minus_button_p2 = pygame.Rect(angle_slider_rect_p2.x - 20, angle_slider_rect_p2.y - 5, 20, 20)  # Smaller size
+    angle_plus_button_p2 = pygame.Rect(angle_slider_rect_p2.x + angle_slider_rect_p2.width + 5, angle_slider_rect_p2.y - 5, 20, 20)  # Smaller size
+    
     bullet = Bullet(0,0,0,0)
     powerup_group = pygame.sprite.Group()  # Define powerup_group as a sprite group
     
@@ -342,14 +364,22 @@ def game_loop():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
                     main()  # Goes back to the main menu and method   
-                if power_minus_button.collidepoint(Py_Event.pos):
-                    power = max(0, power - 1)
-                if power_plus_button.collidepoint(Py_Event.pos):
-                    power = min(100, power + 1)
-                if angle_minus_button.collidepoint(Py_Event.pos):
-                    angle = max(-90, angle - 1)
-                if angle_plus_button.collidepoint(Py_Event.pos):
-                    angle = min(90, angle + 1)
+                if power_minus_button_p1.collidepoint(Py_Event.pos):
+                    power_p1 = max(0, power_p1 - 1)
+                if power_plus_button_p1.collidepoint(Py_Event.pos):
+                    power_p1 = min(100, power_p1 + 1)
+                if angle_minus_button_p1.collidepoint(Py_Event.pos):
+                    angle_p1 = max(-90, angle_p1 - 1)
+                if angle_plus_button_p1.collidepoint(Py_Event.pos):
+                    angle_p1 = min(90, angle_p1 + 1)
+                if power_minus_button_p2.collidepoint(Py_Event.pos):
+                    power_p2 = max(0, power_p2 - 1)
+                if power_plus_button_p2.collidepoint(Py_Event.pos):
+                    power_p2 = min(100, power_p2 + 1)
+                if angle_minus_button_p2.collidepoint(Py_Event.pos):
+                    angle_p2 = max(-90, angle_p2 - 1)
+                if angle_plus_button_p2.collidepoint(Py_Event.pos):
+                    angle_p2 = min(90, angle_p2 + 1)
 
                 elif Py_Event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
                     if playerTurnNum == 0:  # player1
@@ -399,31 +429,47 @@ def game_loop():
         back_font = pygame.font.SysFont('timesnewroman', 40)
         draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
 
-         # Draw sliders and buttons
-        pygame.draw.rect(screen, dark, power_slider_rect)
-        pygame.draw.circle(screen, lightcolor, (power_slider_rect.x + int(power / 100 * power_slider_rect.width), power_slider_rect.y + power_slider_rect.height // 2), 5)
+        # Draw player 1 sliders and buttons
+        pygame.draw.rect(screen, dark, power_slider_rect_p1)
+        pygame.draw.circle(screen, lightcolor, (power_slider_rect_p1.x + int(power_p1 / 100 * power_slider_rect_p1.width), power_slider_rect_p1.y + power_slider_rect_p1.height // 2), 5)
         slider_font = pygame.font.SysFont('timesnewroman', 20)
-        draw_Button(f'Power: {int(power)}', slider_font, black, screen, power_slider_rect.x, power_slider_rect.y - 20)
+        draw_Button(f'Power: {int(power_p1)}', slider_font, black, screen, power_slider_rect_p1.x, power_slider_rect_p1.y - 20)
 
-        pygame.draw.rect(screen, dark, angle_slider_rect)
-        pygame.draw.circle(screen, lightcolor, (angle_slider_rect.x + int((angle + 90) / 180 * angle_slider_rect.width), angle_slider_rect.y + angle_slider_rect.height // 2), 5)
-        draw_Button(f'Angle: {int(angle)}', slider_font, black, screen, angle_slider_rect.x, angle_slider_rect.y - 20)
+        pygame.draw.rect(screen, dark, angle_slider_rect_p1)
+        pygame.draw.circle(screen, lightcolor, (angle_slider_rect_p1.x + int((angle_p1 + 90) / 180 * angle_slider_rect_p1.width), angle_slider_rect_p1.y + angle_slider_rect_p1.height // 2), 5)
+        draw_Button(f'Angle: {int(angle_p1)}', slider_font, black, screen, angle_slider_rect_p1.x, angle_slider_rect_p1.y - 20)
 
-        # Draw plus and minus buttons for power
-        pygame.draw.rect(screen, dark, power_minus_button)
-        draw_Button('-', slider_font, white, screen, power_minus_button.x + 5, power_minus_button.y + 2)
-        pygame.draw.rect(screen, dark, power_plus_button)
-        draw_Button('+', slider_font, white, screen, power_plus_button.x + 5, power_plus_button.y + 2)
+        pygame.draw.rect(screen, dark, power_minus_button_p1)
+        draw_Button('-', slider_font, white, screen, power_minus_button_p1.x + 5, power_minus_button_p1.y + 2)
+        pygame.draw.rect(screen, dark, power_plus_button_p1)
+        draw_Button('+', slider_font, white, screen, power_plus_button_p1.x + 5, power_plus_button_p1.y + 2)
 
-        # Draw plus and minus buttons for angle
-        pygame.draw.rect(screen, dark, angle_minus_button)
-        draw_Button('-', slider_font, white, screen, angle_minus_button.x + 5, angle_minus_button.y + 2)
-        pygame.draw.rect(screen, dark, angle_plus_button)
-        draw_Button('+', slider_font, white, screen, angle_plus_button.x + 5, angle_plus_button.y + 2)
+        pygame.draw.rect(screen, dark, angle_minus_button_p1)
+        draw_Button('-', slider_font, white, screen, angle_minus_button_p1.x + 5, angle_minus_button_p1.y + 2)
+        pygame.draw.rect(screen, dark, angle_plus_button_p1)
+        draw_Button('+', slider_font, white, screen, angle_plus_button_p1.x + 5, angle_plus_button_p1.y + 2)
+
+        # Draw player 2 sliders and buttons
+        pygame.draw.rect(screen, dark, power_slider_rect_p2)
+        pygame.draw.circle(screen, lightcolor, (power_slider_rect_p2.x + int(power_p2 / 100 * power_slider_rect_p2.width), power_slider_rect_p2.y + power_slider_rect_p2.height // 2), 5)
+        draw_Button(f'Power: {int(power_p2)}', slider_font, black, screen, power_slider_rect_p2.x, power_slider_rect_p2.y - 20)
+
+        pygame.draw.rect(screen, dark, angle_slider_rect_p2)
+        pygame.draw.circle(screen, lightcolor, (angle_slider_rect_p2.x + int((angle_p2 + 90) / 180 * angle_slider_rect_p2.width), angle_slider_rect_p2.y + angle_slider_rect_p2.height // 2), 5)
+        draw_Button(f'Angle: {int(angle_p2)}', slider_font, black, screen, angle_slider_rect_p2.x, angle_slider_rect_p2.y - 20)
+
+        pygame.draw.rect(screen, dark, power_minus_button_p2)
+        draw_Button('-', slider_font, white, screen, power_minus_button_p2.x + 5, power_minus_button_p2.y + 2)
+        pygame.draw.rect(screen, dark, power_plus_button_p2)
+        draw_Button('+', slider_font, white, screen, power_plus_button_p2.x + 5, power_plus_button_p2.y + 2)
+
+        pygame.draw.rect(screen, dark, angle_minus_button_p2)
+        draw_Button('-', slider_font, white, screen, angle_minus_button_p2.x + 5, angle_minus_button_p2.y + 2)
+        pygame.draw.rect(screen, dark, angle_plus_button_p2)
+        draw_Button('+', slider_font, white, screen, angle_plus_button_p2.x + 5, angle_plus_button_p2.y + 2)
 
         pygame.display.flip()
         clock.tick(30)
-
 
 # collisions
 def green_tank_circle_collision(floor, circle_rad, green_tank):
