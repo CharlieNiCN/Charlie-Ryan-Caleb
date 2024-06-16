@@ -323,6 +323,8 @@ def game_loop():
                 green_tank_x -= 10
                 greenFuel -= 5
             if event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
+                green_tank_x += 10
+                greenFuel -= 5
 
             if Py_Event.type == pygame.K_LEFT and red_tank_x > 0:
                 red_tank_x -= 10
