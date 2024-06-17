@@ -1,3 +1,4 @@
+
 #This is where all the game code will be
 #Tanks:
 #Physics engine: Gravity and power
@@ -499,6 +500,10 @@ def game_loop():
         pygame.draw.rect(screen, dark, angle_plus_button_p2)
         draw_Button('+', slider_font, white, screen, angle_plus_button_p2.x + 5, angle_plus_button_p2.y + 2)
 
+        #pause button
+        pygame.draw.rect(screen, dark, pause_button)
+        font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('P', font, white, screen, pause_button.x + 10, pause_button.y + 5)
         # Terrain generation
         pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
         pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
