@@ -468,8 +468,38 @@ def game_loop():
         pygame.draw.rect(screen, dark, angle_plus_button_p2)
         draw_Button('+', slider_font, white, screen, angle_plus_button_p2.x + 5, angle_plus_button_p2.y + 2)
 
+        # Terrain generation
+        pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
+        pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
+        pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
+        pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
+        pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
+        pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
+        pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
+
+        # Tank collision handling
+        if pygame.Rect.colliderect(green_tank_rect, floor_1):
+            green_tank_y = floor_1.top - green_tank_height
+        if pygame.Rect.colliderect(green_tank_rect, floor_3):
+            green_tank_y = floor_3.top - green_tank_height
+        if pygame.Rect.colliderect(green_tank_rect, floor_5):
+            green_tank_y = floor_5.top - green_tank_height
+        if pygame.Rect.colliderect(green_tank_rect, floor_6):
+            green_tank_y = floor_6.top - green_tank_height
+
+        if pygame.Rect.colliderect(red_tank_rect, floor_1):
+            red_tank_y = floor_1.top - red_tank_height
+        if pygame.Rect.colliderect(red_tank_rect, floor_3):
+            red_tank_y = floor_3.top - red_tank_height
+        if pygame.Rect.colliderect(red_tank_rect, floor_5):
+            red_tank_y = floor_5.top - red_tank_height
+        if pygame.Rect.colliderect(red_tank_rect, floor_6):
+            red_tank_y = floor_6.top - red_tank_height
+
         pygame.display.flip()
         clock.tick(30)
+
+
 
 # collisions
 def green_tank_circle_collision(floor, circle_rad, green_tank):
@@ -574,32 +604,6 @@ def main():
         screen.fill((140, 170, 255))  # always the first drawing command
         screen.blit(background_image, (0, 0))
 
-        pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
-        pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
-        pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
-        pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
-        pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
-        pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
-        pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
-
-        if pygame.Rect.colliderect(green_tank_rect, floor_1):
-            green_tank_y = floor_1.top - green_tank_height
-        if pygame.Rect.colliderect(green_tank_rect, floor_3):
-            green_tank_y = floor_3.top - green_tank_height
-        if pygame.Rect.colliderect(green_tank_rect, floor_5):
-            green_tank_y = floor_5.top - green_tank_height
-        if pygame.Rect.colliderect(green_tank_rect, floor_6):
-            green_tank_y = floor_6.top - green_tank_height
-
-        if pygame.Rect.colliderect(red_tank_rect, floor_1):
-            red_tank_y = floor_1.top - red_tank_height
-        if pygame.Rect.colliderect(red_tank_rect, floor_3):
-            red_tank_y = floor_3.top - red_tank_height
-        if pygame.Rect.colliderect(red_tank_rect, floor_5):
-            red_tank_y = floor_5.top - red_tank_height
-        if pygame.Rect.colliderect(red_tank_rect, floor_6):
-            red_tank_y = floor_6.top - red_tank_height
-
         font = pygame.font.SysFont(None, 55)
         button_font = pygame.font.SysFont(None, 40)
 
@@ -623,11 +627,6 @@ def main():
     save_progress()    
     pygame.quit()
 
-main()
-
 
 main()
-
-  
-
 
