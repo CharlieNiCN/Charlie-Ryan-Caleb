@@ -1,1 +1,1 @@
-{"coins": 100, "next_power_up": 1, "Inventory_power_ups": ["Default Damage"], "power_up_prices": [40, 10, 50, 20, 30]}
+{"coins": 0, "next_power_up": 5, "Inventory_power_ups": ["Default Damage", "Power Up 1", "Power Up 2", "Power Up 3", "Power Up 4"], "power_up_prices": [50]}

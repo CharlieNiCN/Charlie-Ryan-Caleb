@@ -1,3 +1,13 @@
+#This is where all the game code will be
+#Tanks:
+#Physics engine: Gravity and power
+#Be able to move tanks left and right
+#Menu system -> Adjust power, angle, type of gun etc
+#Settings/preferences: Music On/Off
+#Get points for killing
+#Random terrain generation (For later)
+#Shop -> Buy powerups, new weapons, skins (colors, do later)
+
 import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
@@ -24,6 +34,10 @@ Green = (0, 120, 0)
 Yellow = (255, 255, 0)
 Purple = (160, 30, 240)
 Orange = (230, 160, 0)
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
 playerTurnNum = 0
 coins = 0
 Inventory_power_ups = ["Default Damage"]  # array to store prices of each power up
@@ -37,51 +51,9 @@ background_image = pygame.transform.scale(background_image, (Width, Height))
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
-
-
-green_tank_x = 200
-green_tank_y = 30
-green_tank_width = 4
-greenFuel = 0
-greenHealth = 3
-green_tank_height = 3
-
-red_tank_x = 600
-red_tank_y = 200
-red_tank_width = 4
-redFuel = 0
-redHealth = 3
-red_tank_height = 3
-
-# make the tank
-green_tank = pygame.image.load("green_tank.png")
-green_tank_rect = green_tank.get_rect()
-red_tank = pygame.image.load("red_tank.png")
-red_tank_rect = red_tank.get_rect()
-
-circle_x = 65
-circle_y = 220
-circle_rad = 70
-
-rect_x = 0
-rect_y = 200
-
-circle1_x = 200
-circle1_y = 270
-circle1_rad = 70
-
-rect1_x = 250
-rect1_y = 250
-
-circle2_x = 500
-circle2_y = 290
-circle2_rad = 100
-
-rect3_x = 500
-rect3_y = 190
-
-rect4_x = -120
-rect4_y = 149
+all_sprites = pygame.sprite.Group()
+bullet = None  # Variable to track the bullet
+powerUpRNG = 0
 
 # ---------------------------
 
@@ -118,14 +90,6 @@ def reset_progress():
     save_progress()
     
 # make floor
-floor = (circle_x, circle_y)
-floor_1 = pygame.Rect(rect_x, rect_y, 200, 500)
-floor_2 = (circle1_x, circle1_y)
-floor_3 = pygame.Rect(rect1_x, rect1_y, 200, 500)
-floor_4 = (circle2_x, circle2_y)
-floor_5 = pygame.Rect(rect3_x, rect3_y, 200, 500)
-floor_6 = pygame.Rect(rect4_x, rect4_y, 190, 1000)
-
 #Menus
 def draw_Button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
@@ -152,7 +116,9 @@ def inventory_menu():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:  # if clicked
                 if back_button.collidepoint(Py_Event.pos):  # if back button is clicked on the button area
                     save_progress()  # Save progress when exiting the inventory menu
-                    main()  # Goes back to the main menu and method
+
+                    kill_all_sprites(all_sprites)
+                    return  # Goes back to the main menu and method
                 if page_Buttons[0].collidepoint(Py_Event.pos):
                     current_page = 0  # Switch to colors page
                 if page_Buttons[1].collidepoint(Py_Event.pos):
@@ -229,10 +195,9 @@ def settings_menu():
                 if music_button.collidepoint(Py_Event.pos):  # if user clicked on music button
                     music_on = not music_on  # Update music boolean
                     if music_on:
-                        pygame.mixer.music.set_volume(0)
-
+                        pygame.mixer.music.unpause()
                     else:
-                        pygame.mixer.music.set_volume()
+                        pygame.mixer.music.pause()
                 if reset_button.collidepoint(Py_Event.pos):  # if user clicked on reset button
                     reset_progress()  # Reset progress
 
@@ -309,8 +274,10 @@ def shop_menu():
         pygame.display.flip()
         clock.tick(30)
 
+def kill_all_sprites(group):
+    for sprite in group:
+        sprite.kill()
 def game_loop():
-    powerupNum = 0
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
 
@@ -346,17 +313,18 @@ def game_loop():
     # Plus and minus buttons for angle slider of player 2
     angle_minus_button_p2 = pygame.Rect(angle_slider_rect_p2.x - 20, angle_slider_rect_p2.y - 5, 20, 20)  # Smaller size
     angle_plus_button_p2 = pygame.Rect(angle_slider_rect_p2.x + angle_slider_rect_p2.width + 5, angle_slider_rect_p2.y - 5, 20, 20)  # Smaller size
-    
-    bullet = Bullet(0,0,0,0)
-    powerup_group = pygame.sprite.Group()  # Define powerup_group as a sprite group
-    
+
     while running:
+        powerUpRNG = random.randint(1, 30)
         for Py_Event in pygame.event.get():
             if Py_Event.type == pygame.QUIT:
+                
                 pygame.quit()
                 return
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:
                 if back_button.collidepoint(Py_Event.pos):
+                    kill_all_sprites(all_sprites)
+                    all_sprites.update()
                     main()  # Goes back to the main menu and method   
                 if power_minus_button_p1.collidepoint(Py_Event.pos):
                     power_p1 = max(0, power_p1 - 1)
@@ -397,12 +365,11 @@ def game_loop():
                 greenFuel += 100
                 bullet.kill()
 
-            elif powerupNum <= 3:
+            elif powerUpRNG == 1 and powerupNum <= 3:
                 powerup = PowerUp(random.randint(0, 640), 0)
                 all_sprites.add(powerup)
-                powerup_group.add(powerup)
-                print("test")
-                powerupNum+=1
+                powerup_group.add(powerup)  # Add powerup to the powerup_group
+                powerupNum += 1
 
             if Py_Event.type == pygame.K_LEFT and red_tank_x > 0 and redFuel > 0:
                 red_tank_x -= 10
@@ -418,6 +385,24 @@ def game_loop():
                 greenFuel -= 5
 
         screen.fill(white)
+
+        landscape = Landscape()
+        redtank=red_tank(200, 50)
+        greentank=green_tank(400, 50)
+        powerupNum = 0  # Variable to track the # of power-ups on the board
+
+        bullet = Bullet(0,0,0,0)
+        powerup_group = pygame.sprite.Group()  
+        all_sprites.add(landscape)
+        all_sprites.add(redtank)
+        all_sprites.add(greentank)
+
+        tanks = pygame.sprite.Group()
+        tanks.add(redtank)
+        tanks.add(greentank)
+        
+        all_sprites.draw(screen)
+        tanks.draw(screen)
         
         # Draws the back button
         pygame.draw.rect(screen, dark, back_button)
@@ -462,74 +447,10 @@ def game_loop():
         draw_Button('-', slider_font, white, screen, angle_minus_button_p2.x + 5, angle_minus_button_p2.y + 2)
         pygame.draw.rect(screen, dark, angle_plus_button_p2)
         draw_Button('+', slider_font, white, screen, angle_plus_button_p2.x + 5, angle_plus_button_p2.y + 2)
-
-        # Terrain generation
-        pygame.draw.circle(screen, (0, 100, 0), (circle_x, circle_y), circle_rad)
-        pygame.draw.rect(screen, (0, 100, 0), (rect_x, rect_y, 200, 500), 200)
-        pygame.draw.rect(screen, (0, 100, 0), (rect1_x, rect1_y, 200, 500), 200)
-        pygame.draw.circle(screen, (0, 100, 0), (circle1_x, circle1_y), circle1_rad)
-        pygame.draw.circle(screen, (0, 100, 0), (circle2_x, circle2_y), circle2_rad)
-        pygame.draw.rect(screen, (0, 100, 0), (rect3_x, rect3_y, 200, 500), 20)
-        pygame.draw.rect(screen, (0, 100, 0), (rect4_x, rect4_y, 190, 1000), 100)
-
-        # Tank collision handling
-        if pygame.Rect.colliderect(green_tank_rect, floor_1):
-            green_tank_y = floor_1.top - green_tank_height
-        if pygame.Rect.colliderect(green_tank_rect, floor_3):
-            green_tank_y = floor_3.top - green_tank_height
-        if pygame.Rect.colliderect(green_tank_rect, floor_5):
-            green_tank_y = floor_5.top - green_tank_height
-        if pygame.Rect.colliderect(green_tank_rect, floor_6):
-            green_tank_y = floor_6.top - green_tank_height
-
-        if pygame.Rect.colliderect(red_tank_rect, floor_1):
-            red_tank_y = floor_1.top - red_tank_height
-        if pygame.Rect.colliderect(red_tank_rect, floor_3):
-            red_tank_y = floor_3.top - red_tank_height
-        if pygame.Rect.colliderect(red_tank_rect, floor_5):
-            red_tank_y = floor_5.top - red_tank_height
-        if pygame.Rect.colliderect(red_tank_rect, floor_6):
-            red_tank_y = floor_6.top - red_tank_height
+     
 
         pygame.display.flip()
         clock.tick(30)
-
-
-
-# collisions
-def green_tank_circle_collision(floor, circle_rad, green_tank):
-    green_tank_center = (green_tank_x, green_tank_y)
-    distance = math.hypot(green_tank_center[0] - floor[0], green_tank_center[1] - floor[1])
-    return distance < 70 + green_tank_width // 2
-
-def green_tank_circle2_collision(floor_2, circle1_rad, green_tank):
-    green_tank_center = (green_tank_x, green_tank_y)
-    distance = math.hypot(green_tank_center[0] - floor_2[0], green_tank_center[1] - floor_2[1])
-    return distance < 70 + green_tank_width // 2
-
-def green_tank_circle3_collision(floor_4, circle2_rad, green_tank):
-    green_tank_center = (green_tank_x, green_tank_y)
-    distance = math.hypot(green_tank_center[0] - floor_4[0], green_tank_center[1] - floor_4[1])
-    return distance < 70 + red_tank_width // 2
-
-def red_tank_circle_collision(floor, circle_rad, red_tank):
-    red_tank_center = (red_tank_x, red_tank_y)
-    distance = math.hypot(red_tank_center[0] - floor[0], red_tank_center[1] - floor[1])
-    return distance < 70 + red_tank_width // 2
-
-def red_tank_circle2_collision(floor_2, circle1_rad, red_tank):
-    red_tank_center = (red_tank_x, red_tank_y)
-    distance = math.hypot(red_tank_center[0] - floor_2[0], red_tank_center[1] - floor_2[1])
-    return distance < 70 + red_tank_width // 2
-
-def red_tank_circle3_collision(floor_4, circle2_rad, red_tank):
-    red_tank_center = (red_tank_x, red_tank_y)
-    distance = math.hypot(red_tank_center[0] - floor_4[0], red_tank_center[1] - floor_4[1])
-    return distance < 70 + red_tank_width // 2
-
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
 
 def draw_Button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
@@ -537,7 +458,7 @@ def draw_Button(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-# Sprite class for the bullet 
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, vx, vy):  # x,y are starting position, vx,vy is the speed in x and y
         super().__init__()
@@ -562,6 +483,7 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.left < -self.radius or self.rect.right > Width + self.radius or self.rect.bottom > Height + self.radius:
             self.kill()  # Remove the sprite from all groups
             bullet = None
+
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -580,9 +502,45 @@ class PowerUp(pygame.sprite.Sprite):
             self.rect.bottom = Height
             self.vy = 0  # Stop the vertical velocity
             powerup = None
+# Tank dimensions
+TANK_WIDTH = 50
+TANK_HEIGHT = 50
 
-all_sprites = pygame.sprite.Group()
-bullet = None  # Variable to track the bullet
+class red_tank(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
+        self.image.fill(Red)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+    def update(self):
+        # Optional: Implement update behavior
+        pass
+
+class green_tank(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
+        self.image.fill(Green)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+    def update(self):
+        # Optional: Implement update behavior
+        pass
+# make floor
+class Landscape(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((Width, Height))
+        self.image.fill(WHITE)
+        pygame.draw.polygon(self.image, (0, 128, 0), [(0, Height), (200, 400), (400, 500), (600, 300), (800, Height)])
+        pygame.draw.polygon
+        self.rect = self.image.get_rect()
+    def update(self):
+        # Optional: Implement update behavior
+        pass
+    
+    
 
 
 
@@ -596,21 +554,22 @@ def main():
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
     screen.fill((255, 255, 255))  # always the first drawing command
     pygame.mixer.music.play(-1)
-    
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 save_progress()
                 running = False
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.collidepoint(event.pos):
                     game_loop()
                 if settings_button.collidepoint(event.pos):
+                    all_sprites.empty()
                     settings_menu()
                 if shop_button.collidepoint(event.pos):
+                    all_sprites.empty()
                     shop_menu()
                 if inventory_button.collidepoint(event.pos):
+                    all_sprites.empty()
                     inventory_menu()
             
         screen.fill((140, 170, 255))  # always the first drawing command
