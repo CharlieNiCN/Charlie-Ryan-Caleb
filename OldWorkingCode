@@ -265,6 +265,35 @@ def settings_menu():
 
         pygame.display.flip()
         clock.tick(30)
+def pause_menu():
+    running = True
+    continue_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)
+    main_menu_button = pygame.Rect(Width // 2 - 100, Height // 2 + 50, 200, 50)
+
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
+                if continue_button.collidepoint(Py_Event.pos):
+                    return  # Exit the pause menu and continue the game
+                if main_menu_button.collidepoint(Py_Event.pos):
+                    main()  # Go back to the main menu
+
+        screen.fill(white)
+
+        # Draw the continue button
+        pygame.draw.rect(screen, dark, continue_button)
+        font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('Continue', font, white, screen, continue_button.x + 10, continue_button.y + 10)
+
+        # Draw the main menu button
+        pygame.draw.rect(screen, dark, main_menu_button)
+        draw_Button('Main Menu', font, white, screen, main_menu_button.x + 10, main_menu_button.y + 10)
+
+        pygame.display.flip()
+        clock.tick(30)
 
 def shop_menu():
     global coins, Inventory_power_ups, power_up_prices, next_power_up
@@ -319,6 +348,7 @@ def shop_menu():
 def game_loop():
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
+    pause_button = pygame.Rect(Width - 60, 10, 50, 50)  # Pause button in the top right corner
 
     # Adjusted slider dimensions
     slider_width = 100
@@ -380,7 +410,8 @@ def game_loop():
                     angle_p2 = max(-90, angle_p2 - 1)
                 if angle_plus_button_p2.collidepoint(Py_Event.pos):
                     angle_p2 = min(90, angle_p2 + 1)
-
+                if pause_button.collidepoint(Py_Event.pos):
+                    pause_menu() 
                 elif Py_Event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
                     if playerTurnNum == 0:  # player1
                         vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
