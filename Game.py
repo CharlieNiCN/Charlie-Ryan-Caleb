@@ -542,7 +542,7 @@ def draw_Button(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-# Sprite class for the bullet 
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, vx, vy):  # x,y are starting position, vx,vy is the speed in x and y
         super().__init__()
@@ -568,10 +568,68 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()  # Remove the sprite from all groups
             bullet = None
 
+class PowerUp(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((30, 30))
+        self.image.fill((0, 255, 0))  # Green color for the power-up
+        self.rect = self.image.get_rect(center=(x, y))
+        self.vy = 2  # Slow falling speed
+
+    def update(self):
+        global powerup
+        # Update the position based on velocity
+        self.rect.y += self.vy
+
+        # Stop moving when it touches the ground
+        if self.rect.bottom >= Height:
+            self.rect.bottom = Height
+            self.vy = 0  # Stop the vertical velocity
+            powerup = None
+# Tank dimensions
+TANK_WIDTH = 50
+TANK_HEIGHT = 50
+
+class red_tank(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
+        self.image.fill(Red)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+class green_tank(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
+        self.image.fill(Green)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+# make floor
+class Landscape(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((Width, Height))
+        self.image.fill(WHITE)
+        pygame.draw.polygon(self.image, (0, 128, 0), [(0, Height), (200, 400), (400, 500), (600, 300), (800, Height)])
+        pygame.draw.polygon
+        self.rect = self.image.get_rect()
 all_sprites = pygame.sprite.Group()
 bullet = None  # Variable to track the bullet
 powerupNum = 0  # Variable to track the # of power-ups on the board
 powerUpRNG = 0
+
+all_sprites.add(Landscape)
+all_sprites.add(red_tank)
+all_sprites.add(green_tank)
+
+tanks = pygame.sprite.Group()
+tanks.add(red_tank)
+tanks.add(green_tank)
+tanks = pygame.sprite.Group()
+tanks.add(red_tank)
+tanks.add(green_tank)
+
 
 def main():
     global bullet, powerup
@@ -629,4 +687,3 @@ def main():
 
 
 main()
-
