@@ -159,7 +159,7 @@ def inventory_menu():
 
         pygame.display.flip()
         clock.tick(30)
-
+#Ryan
 def settings_menu():
     global coins, next_power_up, Inventory_power_ups, power_up_prices, music_on
     running = True
