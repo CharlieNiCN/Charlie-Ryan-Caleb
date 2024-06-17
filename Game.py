@@ -1,19 +1,10 @@
-#This is where all the game code will be
-#Tanks:
-#Physics engine: Gravity and power
-#Be able to move tanks left and right
-#Menu system -> Adjust power, angle, type of gun etc
-#Settings/preferences: Music On/Off
-#Get points for killing
-#Random terrain generation (For later)
-#Shop -> Buy powerups, new weapons, skins (colors, do later)
-
 import pygame
 import math
 from pygame.locals import K_ESCAPE, KEYDOWN, QUIT
 import random
 from pygame import event
 import json
+import sys
 
 # Initialize Pygame
 pygame.init()
@@ -34,15 +25,13 @@ Green = (0, 120, 0)
 Yellow = (255, 255, 0)
 Purple = (160, 30, 240)
 Orange = (230, 160, 0)
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-
 playerTurnNum = 0
 coins = 0
 Inventory_power_ups = ["Default Damage"]  # array to store prices of each power up
 power_up_prices = {10, 20, 30, 40, 50}
 next_power_up = 1
+current_bg_color = white  # Initialize with white background
+music_on = True
 
 background_image_path = "TanksBackround.jpg"
 background_image = pygame.image.load(background_image_path)
@@ -51,12 +40,10 @@ background_image = pygame.transform.scale(background_image, (Width, Height))
 screen = pygame.display.set_mode(SIZE)
 clock = pygame.time.Clock()
 
-all_sprites = pygame.sprite.Group()
-bullet = None  # Variable to track the bullet
-powerUpRNG = 0
 
 # ---------------------------
 
+#gpt
 def load_progress():
     global coins, next_power_up, Inventory_power_ups, power_up_prices
     try:
@@ -83,13 +70,13 @@ def save_progress():
 # Reset progress
 def reset_progress():
     global coins, next_power_up, Inventory_power_ups, power_up_prices
-    coins = 100
+    coins = 10
     next_power_up = 1
     Inventory_power_ups = ["Default Damage"]
     power_up_prices = {10, 20, 30, 40, 50}
     save_progress()
     
-# make floor
+
 #Menus
 def draw_Button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
@@ -97,14 +84,15 @@ def draw_Button(text, font, color, surface, x, y):
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
+
+#Ryans work with only the coordinated and some dimensions made by gpt but altered by Ryan
 def inventory_menu():
-    global coins, Inventory_power_ups
+    global coins, Inventory_power_ups, current_bg_color
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
     colors_inventory = [['Blue', 'Red', 'Green'], ['Yellow', 'Purple', 'Orange']]
     power_ups_inventory = [['Power Up 1', 'Power Up 2', 'Power Up 3'], ['Power Up 4', 'Power Up 5', 'Power Up 6']]
     current_page = 0
-    current_bg_color = white  # Initialize with white background
     page_Buttons = [pygame.Rect(Width - 110, 10, 100, 50), pygame.Rect(Width - 310, 10, 160, 50)]  # Moved to the left by another 60 pixels and increased length by 30
 
     while running:
@@ -116,9 +104,7 @@ def inventory_menu():
             if Py_Event.type == pygame.MOUSEBUTTONDOWN:  # if clicked
                 if back_button.collidepoint(Py_Event.pos):  # if back button is clicked on the button area
                     save_progress()  # Save progress when exiting the inventory menu
-
-                    kill_all_sprites(all_sprites)
-                    return  # Goes back to the main menu and method
+                    main()  # Goes back to the main menu and method
                 if page_Buttons[0].collidepoint(Py_Event.pos):
                     current_page = 0  # Switch to colors page
                 if page_Buttons[1].collidepoint(Py_Event.pos):
@@ -175,10 +161,9 @@ def inventory_menu():
         clock.tick(30)
 
 def settings_menu():
-    global coins, next_power_up, Inventory_power_ups, power_up_prices
+    global coins, next_power_up, Inventory_power_ups, power_up_prices, music_on
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
-    music_on = True  # boolean music off or on
     music_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)  # button location of the music
     reset_button = pygame.Rect(Width // 2 - 100, Height // 2 + 50, 200, 50)  # button location of the reset progress
 
@@ -223,9 +208,38 @@ def settings_menu():
 
         pygame.display.flip()
         clock.tick(30)
+def pause_menu():
+    running = True
+    continue_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)
+    main_menu_button = pygame.Rect(Width // 2 - 100, Height // 2 + 50, 200, 50)
+
+    while running:
+        for Py_Event in pygame.event.get():
+            if Py_Event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
+                if continue_button.collidepoint(Py_Event.pos):
+                    return  # Exit the pause menu and continue the game
+                if main_menu_button.collidepoint(Py_Event.pos):
+                    main()  # Go back to the main menu
+
+        screen.fill(white)
+
+        # Draw the continue button
+        pygame.draw.rect(screen, dark, continue_button)
+        font = pygame.font.SysFont('timesnewroman', 40)
+        draw_Button('Continue', font, white, screen, continue_button.x + 10, continue_button.y + 10)
+
+        # Draw the main menu button
+        pygame.draw.rect(screen, dark, main_menu_button)
+        draw_Button('Main Menu', font, white, screen, main_menu_button.x + 10, main_menu_button.y + 10)
+
+        pygame.display.flip()
+        clock.tick(30)
 
 def shop_menu():
-    global coins, Inventory_power_ups, power_up_prices, next_power_up
+    global coins, Inventory_power_ups, power_up_prices, next_power_up, damage
     running = True
     back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
     purchase_button = pygame.Rect(Width // 2 - 100, Height // 2 - 25, 200, 50)  # Center the purchase button
@@ -274,273 +288,187 @@ def shop_menu():
         pygame.display.flip()
         clock.tick(30)
 
-def kill_all_sprites(group):
-    for sprite in group:
-        sprite.kill()
-def game_loop():
-    running = True
-    back_button = pygame.Rect(10, 10, 50, 50)  # Defined the go back button square/rectangle
-
-    # Adjusted slider dimensions
-    slider_width = 100
-    slider_height = 10
-    
-    # Player 1 sliders
-    power_slider_rect_p1 = pygame.Rect(150, 15, slider_width, slider_height)  # Moved down by 5 units
-    angle_slider_rect_p1 = pygame.Rect(150, 45, slider_width, slider_height)  # Moved down by 5 units
-
-    # Player 2 sliders
-    power_slider_rect_p2 = pygame.Rect(Width - 250, 15, slider_width, slider_height)  # Moved to the right
-    angle_slider_rect_p2 = pygame.Rect(Width - 250, 45, slider_width, slider_height)  # Moved to the right
-    
-    power_p1 = 50  # Initial power value for player 1
-    angle_p1 = 45  # Initial angle value for player 1
-    power_p2 = 50  # Initial power value for player 2
-    angle_p2 = 45  # Initial angle value for player 2
-    
-    # Plus and minus buttons for power slider of player 1
-    power_minus_button_p1 = pygame.Rect(power_slider_rect_p1.x - 20, power_slider_rect_p1.y - 5, 20, 20)  # Smaller size
-    power_plus_button_p1 = pygame.Rect(power_slider_rect_p1.x + power_slider_rect_p1.width + 5, power_slider_rect_p1.y - 5, 20, 20)  # Smaller size
-
-    # Plus and minus buttons for angle slider of player 1
-    angle_minus_button_p1 = pygame.Rect(angle_slider_rect_p1.x - 20, angle_slider_rect_p1.y - 5, 20, 20)  # Smaller size
-    angle_plus_button_p1 = pygame.Rect(angle_slider_rect_p1.x + angle_slider_rect_p1.width + 5, angle_slider_rect_p1.y - 5, 20, 20)  # Smaller size
-    
-    # Plus and minus buttons for power slider of player 2
-    power_minus_button_p2 = pygame.Rect(power_slider_rect_p2.x - 20, power_slider_rect_p2.y - 5, 20, 20)  # Smaller size
-    power_plus_button_p2 = pygame.Rect(power_slider_rect_p2.x + power_slider_rect_p2.width + 5, power_slider_rect_p2.y - 5, 20, 20)  # Smaller size
-
-    # Plus and minus buttons for angle slider of player 2
-    angle_minus_button_p2 = pygame.Rect(angle_slider_rect_p2.x - 20, angle_slider_rect_p2.y - 5, 20, 20)  # Smaller size
-    angle_plus_button_p2 = pygame.Rect(angle_slider_rect_p2.x + angle_slider_rect_p2.width + 5, angle_slider_rect_p2.y - 5, 20, 20)  # Smaller size
-
-    while running:
-        powerUpRNG = random.randint(1, 30)
-        for Py_Event in pygame.event.get():
-            if Py_Event.type == pygame.QUIT:
-                
-                pygame.quit()
-                return
-            if Py_Event.type == pygame.MOUSEBUTTONDOWN:
-                if back_button.collidepoint(Py_Event.pos):
-                    kill_all_sprites(all_sprites)
-                    all_sprites.update()
-                    main()  # Goes back to the main menu and method   
-                if power_minus_button_p1.collidepoint(Py_Event.pos):
-                    power_p1 = max(0, power_p1 - 1)
-                if power_plus_button_p1.collidepoint(Py_Event.pos):
-                    power_p1 = min(100, power_p1 + 1)
-                if angle_minus_button_p1.collidepoint(Py_Event.pos):
-                    angle_p1 = max(-90, angle_p1 - 1)
-                if angle_plus_button_p1.collidepoint(Py_Event.pos):
-                    angle_p1 = min(90, angle_p1 + 1)
-                if power_minus_button_p2.collidepoint(Py_Event.pos):
-                    power_p2 = max(0, power_p2 - 1)
-                if power_plus_button_p2.collidepoint(Py_Event.pos):
-                    power_p2 = min(100, power_p2 + 1)
-                if angle_minus_button_p2.collidepoint(Py_Event.pos):
-                    angle_p2 = max(-90, angle_p2 - 1)
-                if angle_plus_button_p2.collidepoint(Py_Event.pos):
-                    angle_p2 = min(90, angle_p2 + 1)
-
-                elif Py_Event.type == pygame.MOUSEBUTTONDOWN and bullet is None:
-                    if playerTurnNum == 0:  # player1
-                        vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-                        vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                        green_tank_x, green_tank_y = event.pos
-                        bullet = Bullet(green_tank_x, green_tank_y, vx, vy)
-                        all_sprites.add(bullet)
-                        playerTurnNum = 1
-                    else:
-                        vx = 5  # Set initial horizontal velocity (+ means going right, - means left)
-                        vy = -10  # Set initial vertical velocity (- means going up, + means going down)
-                        green_tank_x, green_tank_y = event.pos
-                        bullet = Bullet(green_tank_x, green_tank_y, vx, vy)
-                        all_sprites.add(bullet)
-                        playerTurnNum = 0
-
-            if pygame.sprite.spritecollide(bullet, powerup_group, dokill=True):  # Check collision with powerup_group
-                print("Bullet hit the target!")
-                redFuel += 100
-                greenFuel += 100
-                bullet.kill()
-
-            elif powerUpRNG == 1 and powerupNum <= 3:
-                powerup = PowerUp(random.randint(0, 640), 0)
-                all_sprites.add(powerup)
-                powerup_group.add(powerup)  # Add powerup to the powerup_group
-                powerupNum += 1
-
-            if Py_Event.type == pygame.K_LEFT and red_tank_x > 0 and redFuel > 0:
-                red_tank_x -= 10
-                redFuel -= 5
-            if Py_Event.type == pygame.K_RIGHT and red_tank_x < 0 and redFuel > 0:
-                red_tank_x += 10
-                redFuel -= 5
-            if Py_Event.type == pygame.K_a and green_tank_x > 0 and greenFuel > 0:
-                green_tank_x -= 10
-                greenFuel -= 5
-            if Py_Event.type == pygame.K_d and green_tank_x < 0 and greenFuel > 0:
-                green_tank_x += 10
-                greenFuel -= 5
-
-        screen.fill(white)
-
-        landscape = Landscape()
-        redtank=red_tank(200, 50)
-        greentank=green_tank(400, 50)
-        powerupNum = 0  # Variable to track the # of power-ups on the board
-
-        bullet = Bullet(0,0,0,0)
-        powerup_group = pygame.sprite.Group()  
-        all_sprites.add(landscape)
-        all_sprites.add(redtank)
-        all_sprites.add(greentank)
-
-        tanks = pygame.sprite.Group()
-        tanks.add(redtank)
-        tanks.add(greentank)
-        
-        all_sprites.draw(screen)
-        tanks.draw(screen)
-        
-        # Draws the back button
-        pygame.draw.rect(screen, dark, back_button)
-        back_font = pygame.font.SysFont('timesnewroman', 40)
-        draw_Button('<', back_font, white, screen, back_button.x + 10, back_button.y + 5)
-
-        # Draw player 1 sliders and buttons
-        pygame.draw.rect(screen, dark, power_slider_rect_p1)
-        pygame.draw.circle(screen, lightcolor, (power_slider_rect_p1.x + int(power_p1 / 100 * power_slider_rect_p1.width), power_slider_rect_p1.y + power_slider_rect_p1.height // 2), 5)
-        slider_font = pygame.font.SysFont('timesnewroman', 20)
-        draw_Button(f'Power: {int(power_p1)}', slider_font, black, screen, power_slider_rect_p1.x, power_slider_rect_p1.y - 20)
-
-        pygame.draw.rect(screen, dark, angle_slider_rect_p1)
-        pygame.draw.circle(screen, lightcolor, (angle_slider_rect_p1.x + int((angle_p1 + 90) / 180 * angle_slider_rect_p1.width), angle_slider_rect_p1.y + angle_slider_rect_p1.height // 2), 5)
-        draw_Button(f'Angle: {int(angle_p1)}', slider_font, black, screen, angle_slider_rect_p1.x, angle_slider_rect_p1.y - 20)
-
-        pygame.draw.rect(screen, dark, power_minus_button_p1)
-        draw_Button('-', slider_font, white, screen, power_minus_button_p1.x + 5, power_minus_button_p1.y + 2)
-        pygame.draw.rect(screen, dark, power_plus_button_p1)
-        draw_Button('+', slider_font, white, screen, power_plus_button_p1.x + 5, power_plus_button_p1.y + 2)
-
-        pygame.draw.rect(screen, dark, angle_minus_button_p1)
-        draw_Button('-', slider_font, white, screen, angle_minus_button_p1.x + 5, angle_minus_button_p1.y + 2)
-        pygame.draw.rect(screen, dark, angle_plus_button_p1)
-        draw_Button('+', slider_font, white, screen, angle_plus_button_p1.x + 5, angle_plus_button_p1.y + 2)
-
-        # Draw player 2 sliders and buttons
-        pygame.draw.rect(screen, dark, power_slider_rect_p2)
-        pygame.draw.circle(screen, lightcolor, (power_slider_rect_p2.x + int(power_p2 / 100 * power_slider_rect_p2.width), power_slider_rect_p2.y + power_slider_rect_p2.height // 2), 5)
-        draw_Button(f'Power: {int(power_p2)}', slider_font, black, screen, power_slider_rect_p2.x, power_slider_rect_p2.y - 20)
-
-        pygame.draw.rect(screen, dark, angle_slider_rect_p2)
-        pygame.draw.circle(screen, lightcolor, (angle_slider_rect_p2.x + int((angle_p2 + 90) / 180 * angle_slider_rect_p2.width), angle_slider_rect_p2.y + angle_slider_rect_p2.height // 2), 5)
-        draw_Button(f'Angle: {int(angle_p2)}', slider_font, black, screen, angle_slider_rect_p2.x, angle_slider_rect_p2.y - 20)
-
-        pygame.draw.rect(screen, dark, power_minus_button_p2)
-        draw_Button('-', slider_font, white, screen, power_minus_button_p2.x + 5, power_minus_button_p2.y + 2)
-        pygame.draw.rect(screen, dark, power_plus_button_p2)
-        draw_Button('+', slider_font, white, screen, power_plus_button_p2.x + 5, power_plus_button_p2.y + 2)
-
-        pygame.draw.rect(screen, dark, angle_minus_button_p2)
-        draw_Button('-', slider_font, white, screen, angle_minus_button_p2.x + 5, angle_minus_button_p2.y + 2)
-        pygame.draw.rect(screen, dark, angle_plus_button_p2)
-        draw_Button('+', slider_font, white, screen, angle_plus_button_p2.x + 5, angle_plus_button_p2.y + 2)
-     
-
-        pygame.display.flip()
-        clock.tick(30)
-
-def draw_Button(text, font, color, surface, x, y):
+def draw_button(text, font, color, surface, x, y):
     textobj = font.render(text, True, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
 
-
-class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, vx, vy):  # x,y are starting position, vx,vy is the speed in x and y
-        super().__init__()
-        self.radius = 5
-        self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)  # Create a transparent surface
-        pygame.draw.circle(self.image, black, (self.radius, self.radius), self.radius)  # Draw a black circle
-        self.rect = self.image.get_rect(center=(x, y))
-        self.vx = vx
-        self.vy = vy
-        self.gravity = 0.5  # gravity
-        self.damage = 10 + (len(Inventory_power_ups) - 1) * 5  # Calculate damage based on power-ups
-
-    def update(self):
-        global bullet
-        self.vy += self.gravity
-
-        # Update the position based on velocity
-        self.rect.x += self.vx
-        self.rect.y += self.vy
-
-        # Boundary checking to keep the sprite within the screen
-        if self.rect.left < -self.radius or self.rect.right > Width + self.radius or self.rect.bottom > Height + self.radius:
-            self.kill()  # Remove the sprite from all groups
-            bullet = None
-
-class PowerUp(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.Surface((30, 30))
-        self.image.fill((0, 255, 0))  # Green color for the power-up
-        self.rect = self.image.get_rect(center=(x, y))
-        self.vy = 2  # Slow falling speed
-
-    def update(self):
-        global powerup
-        # Update the position based on velocity
-        self.rect.y += self.vy
-
-        # Stop moving when it touches the ground
-        if self.rect.bottom >= Height:
-            self.rect.bottom = Height
-            self.vy = 0  # Stop the vertical velocity
-            powerup = None
-# Tank dimensions
-TANK_WIDTH = 50
-TANK_HEIGHT = 50
-
-class red_tank(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
-        self.image.fill(Red)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-    def update(self):
-        # Optional: Implement update behavior
-        pass
-
-class green_tank(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((TANK_WIDTH, TANK_HEIGHT))
-        self.image.fill(Green)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-    def update(self):
-        # Optional: Implement update behavior
-        pass
-# make floor
-class Landscape(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((Width, Height))
-        self.image.fill(WHITE)
-        pygame.draw.polygon(self.image, (0, 128, 0), [(0, Height), (200, 400), (400, 500), (600, 300), (800, Height)])
-        pygame.draw.polygon
-        self.rect = self.image.get_rect()
-    def update(self):
-        # Optional: Implement update behavior
-        pass
+#gpt
+def pause_menu(screen, font):
+    screen_width = 800
+    screen_height = 600
+    white = (255, 255, 255)
+    black = (0, 0, 0)
     
+    continue_button = pygame.Rect(screen_width // 2 - 100, screen_height // 2 - 25, 200, 50)
+    main_menu_button = pygame.Rect(screen_width // 2 - 100, screen_height // 2 + 50, 200, 50)
     
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if continue_button.collidepoint(event.pos):
+                    return  # Exit the pause menu and continue the game
+                if main_menu_button.collidepoint(event.pos):
+                    main()
+
+        screen.fill(black)
+        pygame.draw.rect(screen, white, continue_button)
+        pygame.draw.rect(screen, white, main_menu_button)
+        draw_button('Continue', font, black, screen, continue_button.x, continue_button.y)
+        draw_button('Main Menu', font, black, screen, main_menu_button.x, main_menu_button.y)
+        
+        pygame.display.flip()
+
+#game_loop was chat gpt
+def game_loop():
+    global next_power_up, current_bg_color, coins
+    damage = next_power_up
+    pygame.init()
+    screen_width = 800
+    screen_height = 600
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    pygame.display.set_caption('Tank Battle')
+
+    # Pause button
+    pause_button = pygame.Rect(screen_width // 2 - 25, 10, 50, 50)
+    
+    # Colors
+    black = (0, 0, 0)
+    white = (255, 255, 255)
+    red = (255, 0, 0)
+    blue = (0, 0, 255)
+    dark = (50, 50, 50)
+    
+    # Tank properties
+    tank_width = 50
+    tank_height = 30
+    bullet_height = 5
+    tank_speed = 5
+    bullet_speed = 7
+    player1_lives = 5
+    player2_lives = 5
+
+    # Power-up variable
+    next_power_up = 6  # Change this value as needed
+    bullet_width = next_power_up - 1
+    
+    # Initialize player positions
+    player1_x = 50
+    player1_y = screen_height // 2 - tank_height // 2
+    player2_x = screen_width - 100
+    player2_y = screen_height // 2 - tank_height // 2
+    
+    # Bullet properties
+    bullets = []
+    
+    # Shooting flags
+    player1_shooting = False
+    player2_shooting = False
+    
+    # Fonts
+    font = pygame.font.Font(None, 36)
+    
+    # Game loop
+    clock = pygame.time.Clock()
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if pause_button.collidepoint(event.pos):
+                    pause_menu(screen, font)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    player1_shooting = True
+                if event.key == pygame.K_m:
+                    player2_shooting = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_z:
+                    player1_shooting = False
+                if event.key == pygame.K_m:
+                    player2_shooting = False
+        
+        # Key presses
+        keys = pygame.key.get_pressed()
+        
+        # Player 1 movement
+        if keys[pygame.K_w]:
+            player1_y -= tank_speed
+        if keys[pygame.K_s]:
+            player1_y += tank_speed
+        if keys[pygame.K_a]:
+            player1_x -= tank_speed
+        if keys[pygame.K_d]:
+            player1_x += tank_speed
+        if player1_shooting and not any(b[2] == bullet_speed and b[0] > player1_x for b in bullets):
+            bullets.append((player1_x + tank_width, player1_y + tank_height // 2 - bullet_height // 2, bullet_speed))
+            player1_shooting = False  # Reset shooting flag
+        
+        # Player 2 movement
+        if keys[pygame.K_UP]:
+            player2_y -= tank_speed
+        if keys[pygame.K_DOWN]:
+            player2_y += tank_speed
+        if keys[pygame.K_LEFT]:
+            player2_x -= tank_speed
+        if keys[pygame.K_RIGHT]:
+            player2_x += tank_speed
+        if player2_shooting and not any(b[2] == -bullet_speed and b[0] < player2_x for b in bullets):
+            bullets.append((player2_x, player2_y + tank_height // 2 - bullet_height // 2, -bullet_speed))
+            player2_shooting = False  # Reset shooting flag
+        
+        # Update bullet positions
+        for i in range(len(bullets)-1, -1, -1):
+            bullets[i] = (bullets[i][0] + bullets[i][2], bullets[i][1], bullets[i][2])
+            if bullets[i][0] < 0 or bullets[i][0] > screen_width:
+                bullets.pop(i)
+        
+        # Check for collisions
+        for bullet in bullets:
+            if player1_x < bullet[0] < player1_x + tank_width and player1_y < bullet[1] < player1_y + tank_height:
+                player1_lives -= damage
+                bullets.remove(bullet)
+            if player2_x < bullet[0] < player2_x + tank_width and player2_y < bullet[1] < player2_y + tank_height:
+                player2_lives -= damage
+                bullets.remove(bullet)
+        
+        # Game Over condition
+        if player1_lives <= 0 or player2_lives <= 0:
+            coins += 5
+            return coins
+            main()
+        
+        # Drawing
+        screen.fill(black)
+        pygame.draw.rect(screen, current_bg_color, (player1_x, player1_y, tank_width, tank_height))
+        pygame.draw.rect(screen, current_bg_color, (player2_x, player2_y, tank_width, tank_height))
+        for bullet in bullets:
+            pygame.draw.rect(screen, white, (bullet[0], bullet[1], bullet_width, bullet_height))
+        
+        # Pause button
+        pygame.draw.rect(screen, dark, pause_button)
+        draw_button('P', font, white, screen, pause_button.x, pause_button.y)
+        
+        # Draw lives
+        lives1_text = font.render(f'Lives: {player1_lives}', True, white)
+        lives2_text = font.render(f'Lives: {player2_lives}', True, white)
+        screen.blit(lives1_text, (10, 10))
+        screen.blit(lives2_text, (screen_width - 110, 10))
+        
+        pygame.display.flip()
+        clock.tick(60)
+
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
 
 
 
@@ -553,23 +481,24 @@ def main():
     shop_button = pygame.Rect(Width // 2 - 100, Height // 2 + 40, 200, 50)
     inventory_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
     screen.fill((255, 255, 255))  # always the first drawing command
-    pygame.mixer.music.play(-1)
+    if music_on:
+        pygame.mixer.music.play(-1)
+    
     while running:
+        powerUpRNG = random.randint(1, 30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 save_progress()
                 running = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button.collidepoint(event.pos):
                     game_loop()
                 if settings_button.collidepoint(event.pos):
-                    all_sprites.empty()
                     settings_menu()
                 if shop_button.collidepoint(event.pos):
-                    all_sprites.empty()
                     shop_menu()
                 if inventory_button.collidepoint(event.pos):
-                    all_sprites.empty()
                     inventory_menu()
             
         screen.fill((140, 170, 255))  # always the first drawing command
@@ -591,8 +520,7 @@ def main():
         draw_Button('Inventory', font, black, screen, inventory_button.x + 25, inventory_button.y + 10)  # Changed to black  
 
         #end code (MUST BE PUT AT THE BACK)
-        all_sprites.update()  # Update all sprites
-        all_sprites.draw(screen)  # Draw all sprites
+
         pygame.display.flip()  # Flip the display
         clock.tick(30)  # Cap the frame rate
     save_progress()    
